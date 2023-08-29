@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "038e288b-5418-439d-a7f5-bc9a9c982993"
+      }
+    },
+    "owner": "ethan.steip"
   }
 }
