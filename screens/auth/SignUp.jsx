@@ -1,72 +1,79 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
+import { supabase } from "../../lib/supabase";
+import { Button, Input } from "react-native-elements";
 
-export default function SignUp() {
-  //const [text, onChangeText] = useState("");
-  //const [number, onChangeNumber] = useState("");
+export default function Auth() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function signInWithEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
+
+  async function signUpWithEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.signupContainer}>
-        <Text style={styles.heading}>Sign Up</Text>
-        <View style={styles.inputsContainer}>
-          <TextInput style={styles.input} placeholder="First Name"></TextInput>
-          <TextInput style={styles.input} placeholder="Last Name"></TextInput>
-          <TextInput style={styles.input} placeholder="Email"></TextInput>
-          <TextInput secureTextEntry={true} style={styles.input} placeholder="Password"></TextInput>
-          <TextInput
-            secureTextEntry={true}
-            style={styles.input}
-            placeholder="Confirm password"></TextInput>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Input
+          label="Email"
+          leftIcon={{ type: "font-awesome", name: "envelope" }}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+          placeholder="email@address.com"
+          autoCapitalize={"none"}
+        />
       </View>
-    </SafeAreaView>
+      <View style={styles.verticallySpaced}>
+        <Input
+          label="Password"
+          leftIcon={{ type: "font-awesome", name: "lock" }}
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+          secureTextEntry={true}
+          placeholder="Password"
+          autoCapitalize={"none"}
+        />
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: "#ffe294",
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "stretch",
+  container: {
+    marginTop: 40,
+    padding: 12,
   },
-  signupContainer: {
-    flexDirection: "column",
-    paddingHorizontal: 20,
-    height: "auto",
+  verticallySpaced: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    alignSelf: "stretch",
   },
-  heading: {
-    fontWeight: "500",
-    fontSize: 30,
-    marginBottom: 25,
-  },
-  inputsContainer: {
-    flexDirection: "column",
-  },
-  input: {
-    paddingBottom: 3,
-    marginBottom: 15,
-    borderBottomWidth: 2,
-    borderColor: "rgba(0,0,0,0.18)",
-    fontSize: 20,
-  },
-  button: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    paddingVertical: 15,
-    backgroundColor: "black",
-    borderRadius: 12,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 18,
+  mt20: {
+    marginTop: 20,
   },
 });
