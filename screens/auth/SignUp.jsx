@@ -1,23 +1,12 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { Button, Input } from "react-native-elements";
 
-export default function Auth() {
+export default function SignUp({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (error) Alert.alert(error.message);
-    setLoading(false);
-  }
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -53,11 +42,13 @@ export default function Auth() {
           autoCapitalize={"none"}
         />
       </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
-      </View>
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+      </View>
+      <View style={[styles.signInContainer, styles.mt20]}>
+        <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
+          <Text>Already have an account? Sign In</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -75,5 +66,9 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  signInContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
   },
 });
