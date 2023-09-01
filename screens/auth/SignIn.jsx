@@ -14,9 +14,12 @@ export default function SignIn({ navigation }) {
       email: email,
       password: password,
     });
+    console.log("logging In");
 
     if (error) Alert.alert(error.message);
     setLoading(false);
+
+    //navigation.navigate("Account");
   }
 
   return (
