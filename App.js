@@ -34,13 +34,13 @@ function CustomDrawerContent(props) {
 }
 
 function MyDrawer({ session }) {
-  console.log("DRAWER SESSION: ", session.user);
+  console.log("DRAWER SESSION: ", session);
   return (
-    <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
+    <Drawer.Navigator initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Schedule" component={Schedule} />
       <Drawer.Screen name="Messages" component={Messages} />
-      <Drawer.Screen name="Account">{(session) => <Account {...session} />}</Drawer.Screen>
+      <Drawer.Screen name="Account">{() => <Account {...session} />}</Drawer.Screen>
     </Drawer.Navigator>
   );
 }
