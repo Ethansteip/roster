@@ -13,12 +13,12 @@ import { supabase } from "./lib/supabase";
 import Home from "./screens/Home";
 import Schedule from "./screens/Schedule";
 import Messages from "./screens/Messages";
-import Onboarding from "./screens/onboarding/Onboarding";
+//import Onboarding from "./screens/onboarding/Onboarding";
 import SignIn from "./screens/auth/SignIn";
 import SignUp from "./screens/auth/SignUp";
 import Account from "./screens/Account";
 
-import { Button } from "react-native-elements";
+//import { Button } from "react-native-elements";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
