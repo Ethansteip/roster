@@ -17,6 +17,7 @@ import Messages from "./screens/Messages";
 import SignIn from "./screens/auth/SignIn";
 import SignUp from "./screens/auth/SignUp";
 import Account from "./screens/Account";
+import GetStarted from "./screens/Get Started/GetStarted";
 
 //import { Button } from "react-native-elements";
 
@@ -57,6 +58,17 @@ function Auth({ session }) {
   );
 }
 
+const MainStack = createNativeStackNavigator();
+
+function Main({ session }) {
+  return (
+    <MainStack.Navigator initialRouteName="GetStarted" screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name="GetStarted" component={GetStarted} />
+      <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen>
+    </MainStack.Navigator>
+  );
+}
+
 //const Appstack = createNativeStackNavigator();
 
 export default function App() {
@@ -73,7 +85,6 @@ export default function App() {
       setSession(session);
     });
   }, []);
-
   return (
     <NavigationContainer>
       {/* <Appstack.Navigator initialRouteName="Onboarding" screenOptions={{ headerShown: false }}>
@@ -81,7 +92,7 @@ export default function App() {
         <Appstack.Screen name="MyDrawer" component={MyDrawer} />
         <Appstack.Screen name="Auth" component={Auth} initialParams={session} />
       </Appstack.Navigator> */}
-      {session ? <MyDrawer session={session} /> : <Auth />}
+      {session ? <Main session={session} /> : <Auth />}
     </NavigationContainer>
   );
 }
