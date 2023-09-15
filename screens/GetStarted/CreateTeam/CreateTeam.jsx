@@ -1,30 +1,60 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useState, useEffect } from "react";
-import { View, Alert, Text, TextInput, SafeAreaView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Alert,
+  Text,
+  TextInput,
+  SafeAreaView,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { supabase } from "../../../lib/supabase";
 
 import BackArrow from "../../../icons/BackArrow";
+import SelectSport from "../../../components/GettingStarted/SelectSport";
 
 function Screen1({ navigation }) {
-  const [availableSports, setAvailableSports] = useState({});
+  const [availableSports, setAvailableSports] = useState([]);
   const [teamName, setTeamName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchSports = async () => {
+    setLoading(true);
     const { data, error } = await supabase.from("sports").select();
 
     if (error) {
       Alert.alert(error.message);
+      setLoading(false);
     }
 
     if (data) {
+      console.log("DATA: ", data);
       setAvailableSports(data);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchSports();
-    console.log("Sports", availableSports);
   }, []);
+
+  const renderSelectSport = ({ item }) => {
+    return <SelectSport name={item.name} />;
+  };
+
+  function SportSelectionList() {
+    return (
+      <FlatList
+        className="mt-5"
+        data={availableSports}
+        renderItem={renderSelectSport}
+        keyExtractor={(item) => item.id}
+        numColumns={3}
+      />
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 w-full flex-col justify-between bg-white">
@@ -42,6 +72,9 @@ function Screen1({ navigation }) {
           onChangeText={(text) => setTeamName(text)}
           autoCapitalize={"none"}
         />
+        {/* <View className="flex flex-row">{SelectSportIcons}</View> */}
+        {/* <Text>{availableSports.toString()}</Text> */}
+        {loading ? <ActivityIndicator size="large" color="#6366f1" /> : <SportSelectionList />}
       </View>
       <View className="flex flex-col justify-end items-center mx-6 pb-5">
         <TouchableOpacity
