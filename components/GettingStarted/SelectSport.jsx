@@ -7,6 +7,8 @@ import BasketBall from "../../icons/Sports/Basketball";
 import Volleyball from "../../icons/Sports/Volleyball";
 import Lacrosse from "../../icons/Sports/Lacrosse";
 import Soccer from "../../icons/Sports/Soccer";
+import Other from "../../icons/Sports/Other";
+import Football from "../../icons/Sports/Football";
 
 export default function SelectSport({ name }) {
   const icon = (name) => {
@@ -16,11 +18,14 @@ export default function SelectSport({ name }) {
     if (name === "Hockey") return <Hockey />;
     if (name === "Volleyball") return <Volleyball />;
     if (name === "Basketball") return <BasketBall />;
+    if (name === "Football") return <Football />;
+    if (name === "Other") return <Other />;
   };
+
   return (
-    <TouchableOpacity className="flex justify-center items-center border border-gray-300 bg-indigo-400 w-1/3 px-3 py-3 rounded-lg">
+    <>
       {icon(name)}
       <Text className="text-lg text-white font-semibold">{name}</Text>
-    </TouchableOpacity>
+    </>
   );
 }

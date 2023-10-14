@@ -19,6 +19,7 @@ function Screen1({ navigation }) {
   const [availableSports, setAvailableSports] = useState([]);
   const [teamName, setTeamName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [activeSelection, setActiveSelection] = useState();
 
   const fetchSports = async () => {
     setLoading(true);
@@ -41,7 +42,15 @@ function Screen1({ navigation }) {
   }, []);
 
   const renderSelectSport = ({ item }) => {
-    return <SelectSport name={item.name} />;
+    return (
+      <TouchableOpacity
+        onPress={() => setActiveSelection(item.id)}
+        className={`flex justify-center items-center border border-gray-300 w-1/3 px-3 py-3 rounded-lg ${
+          activeSelection === item.id ? "bg-indigo-700" : "bg-indigo-400"
+        }`}>
+        <SelectSport name={item.name} />
+      </TouchableOpacity>
+    );
   };
 
   function SportSelectionList() {
@@ -66,11 +75,11 @@ function Screen1({ navigation }) {
           <Text className="text-2xl font-bold">Team Information</Text>
         </View>
         <TextInput
+          autoCapitalize={"words"}
           placeholder="Team Name"
-          className="bg-gray-50 text-xl h-14 border-2 border-gray-300 text-gray-900 rounded-lg focus:ring-indigo-900 focus:border-indigo-900 block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="bg-gray-50 text-xl pb-3 h-14 border-2 border-gray-300 text-gray-900 rounded-lg focus:ring-indigo-900 focus:border-indigo-900 block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           value={teamName}
           onChangeText={(text) => setTeamName(text)}
-          autoCapitalize={"none"}
         />
         {/* <View className="flex flex-row">{SelectSportIcons}</View> */}
         {/* <Text>{availableSports.toString()}</Text> */}

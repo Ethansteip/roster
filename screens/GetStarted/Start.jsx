@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 
 import CreateTeam from "roster/screens/GetStarted/CreateTeam/CreateTeam.jsx";
 
-function GetStarted({ navigation }) {
+function Start({ navigation }) {
   return (
     <SafeAreaView className="flex-1 w-full flex-col">
       <View className="flex h-1/2  flex-col justify-center items-center">
@@ -30,7 +30,7 @@ const Screen = createNativeStackNavigator();
 export default function Onboarding() {
   return (
     <Screen.Navigator screenOptions={{ headerShown: false }} initialRouteName="OnboardingScreen1">
-      <Screen.Screen name="GetStarted" component={GetStarted} />
+      <Screen.Screen name="GetStarted" component={Start} />
       <Screen.Screen name="CreateTeam" component={CreateTeam} />
     </Screen.Navigator>
   );

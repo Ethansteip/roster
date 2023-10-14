@@ -1,88 +1,92 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, SafeAreaView, TouchableOpacity } from "react-native";
 
 function OnBoardingScreen1({ navigation }) {
   return (
-    <>
-      <View style={styles.navigationDotsContainer}>
-        <View style={[styles.navigationDots, styles.activeDot]} />
-        <View style={styles.navigationDots} />
-        <View style={styles.navigationDots} />
+    <SafeAreaView className="bg-offwhite flex-1 justify-between">
+      <View className="flex flex-col space-y-10">
+        <View className="flex flex-row justify-between space-x-3 px-5 py-3">
+          <View className="w-[30%] h-2 rounded-full bg-green" />
+          <View className="w-[30%] h-2 rounded-full bg-green opacity-20" />
+          <View className="w-[30%] h-2 rounded-full bg-green opacity-20" />
+        </View>
+        <View className="px-5">
+          <Text className="text-gray-2 text-5xl font-black">Welcome To Roster</Text>
+          <Text className="text-gray-2 text-xl font-extralight">
+            The Easiest Way To Manage Your Intermural And Beer League Sports
+          </Text>
+        </View>
       </View>
-      <View style={styles.mainContainer}>
-        <Text style={styles.mainText}>Welcome To Roster</Text>
-        <Text style={styles.subText}>
-          The Easiest Way To Manage Your Intermural And Beer League Sports
-        </Text>
-      </View>
-      <View style={styles.navigationContainer1}>
+      <View className="flex flex-col justify-center items-center px-5">
         <TouchableOpacity
-          style={styles.nextButton}
+          className="bg-gray py-3 w-full flex justify-center items-center rounded-xl"
           onPress={() => navigation.navigate("OnboardingScreen2")}>
-          <Text style={styles.nextButtonText}>Next</Text>
+          <Text className="font-semibold text-lg text-offwhite">Next</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Auth", { screen: "SignUp" })}>
-          <Text style={styles.skipButton}>Skip</Text>
+          <Text className="text-lg text-gray mt-3">Skip</Text>
         </TouchableOpacity>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
 function OnBoardingScreen2({ navigation }) {
   return (
-    <>
-      <View style={styles.navigationDotsContainer}>
-        <View style={[styles.navigationDots, styles.activeDot]} />
-        <View style={[styles.navigationDots, styles.activeDot]} />
-        <View style={styles.navigationDots} />
+    <SafeAreaView className="bg-offwhite flex-1 justify-between">
+      <View className="flex flex-col space-y-10">
+        <View className="flex flex-row justify-between space-x-3 px-5 py-3">
+          <View className="w-[30%] h-2 rounded-full bg-green" />
+          <View className="w-[30%] h-2 rounded-full bg-green" />
+          <View className="w-[30%] h-2 rounded-full bg-green opacity-20" />
+        </View>
+        <View className="px-5">
+          <Text className="text-gray-2 text-5xl font-black">Team Management Made Easy</Text>
+          <Text className="text-gray-2 text-xl font-extralight">
+            Group chat, scheduling, league fees management - weve got your covered.
+          </Text>
+        </View>
       </View>
-      <View style={styles.mainContainer}>
-        <Text style={styles.mainText}>Team Management Made Easy</Text>
-        <Text style={styles.subText}>
-          Group Chat, Scheduling, league fees - We&apos;ve got you covered
-        </Text>
-      </View>
-      <View style={styles.navigationContainer1}>
+      <View className="flex flex-col justify-center items-center px-5">
         <TouchableOpacity
-          style={styles.nextButton}
+          className="bg-gray py-3 w-full flex justify-center items-center rounded-xl"
           onPress={() => navigation.navigate("OnboardingScreen3")}>
-          <Text style={styles.nextButtonText}>Next</Text>
+          <Text className="font-semibold text-lg text-offwhite">Next</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Auth", { screen: "SignUp" })}>
-          <Text style={styles.skipButton}>Skip</Text>
+          <Text className="text-lg text-gray mt-3">Skip</Text>
         </TouchableOpacity>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
 function OnBoardingScreen3({ navigation }) {
   return (
-    <>
-      <View style={styles.navigationDotsContainer}>
-        <View style={[styles.navigationDots, styles.activeDot]} />
-        <View style={[styles.navigationDots, styles.activeDot]} />
-        <View style={[styles.navigationDots, styles.activeDot]} />
+    <SafeAreaView className="bg-offwhite flex-1 justify-between">
+      <View className="flex flex-col space-y-10">
+        <View className="flex flex-row justify-between space-x-3 px-5 py-3">
+          <View className="w-[30%] h-2 rounded-full bg-green" />
+          <View className="w-[30%] h-2 rounded-full bg-green" />
+          <View className="w-[30%] h-2 rounded-full bg-green" />
+        </View>
+        <View className="px-5">
+          <Text className="text-gray-2 text-5xl font-black">Game On!</Text>
+          <Text className="text-gray-2 text-xl font-extralight">
+            Well take care of managing the team while you focus on crushing it. See you on the
+            court!
+          </Text>
+        </View>
       </View>
-      <View style={styles.mainContainer}>
-        <Text style={styles.mainText}>Game On!</Text>
-        <Text style={styles.subText}>
-          Stay up-to-date with real-time notifications and keep the competitive spirit alive.
-        </Text>
-      </View>
-      <View style={styles.navigationContainer1}>
+      <View className="flex flex-col justify-center items-center px-5 mb-5">
         <TouchableOpacity
-          onPress={() => navigation.navigate("Auth", { screen: "SignUp" })}
-          style={styles.nextButton}>
-          <Text style={styles.nextButtonText}>Get Started</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Auth", { screen: "SignUp" })}>
-          <Text style={styles.skipButton}>Skip</Text>
+          className="bg-gray py-3 w-full flex justify-center items-center rounded-xl"
+          onPress={() => navigation.navigate("SignUp")}>
+          <Text className="font-semibold text-lg text-offwhite">Get Started</Text>
         </TouchableOpacity>
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 
@@ -97,74 +101,3 @@ export default function Onboarding() {
     </Onboard.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    backgroundColor: "#ffe294",
-    paddingHorizontal: 30,
-  },
-  navigationContainer1: {
-    paddingVertical: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffe294",
-  },
-  navigationContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 40,
-  },
-  navigationDotsContainer: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    paddingVertical: 50,
-    backgroundColor: "#ffe294",
-  },
-  navigationDots: {
-    width: "30%",
-    height: 7,
-    marginHorizontal: 3,
-    borderRadius: 10,
-    backgroundColor: "rgba(0,0,0,0.18)",
-  },
-  activeDot: {
-    backgroundColor: "#000000",
-  },
-  nextButton: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "94%",
-    paddingVertical: 15,
-    backgroundColor: "black",
-    borderRadius: 12,
-  },
-  nextButtonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 18,
-  },
-  skipButton: {
-    color: "black",
-    fontSize: 15,
-    paddingVertical: 13,
-  },
-  mainText: {
-    fontWeight: "900",
-    color: "white",
-    fontSize: 50,
-    lineHeight: 50,
-  },
-  subText: {
-    fontWeight: "300",
-    color: "#707070",
-    fontSize: 20,
-    lineHeight: 25,
-    paddingVertical: 10,
-  },
-});

@@ -9,15 +9,16 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { supabase } from "./lib/supabase";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Home from "./screens/Home";
 import Schedule from "./screens/Schedule";
 import Messages from "./screens/Messages";
-//import Onboarding from "./screens/onboarding/Onboarding";
+import Onboarding from "./screens/onboarding/Onboarding";
 import SignIn from "./screens/auth/SignIn";
 import SignUp from "./screens/auth/SignUp";
 import Account from "./screens/Account";
-import GetStarted from "./screens/GetStarted/GetStarted";
+import Start from "./screens/GetStarted/Start";
 
 //import { Button } from "react-native-elements";
 
@@ -34,8 +35,7 @@ function CustomDrawerContent(props) {
   );
 }
 
-function MyDrawer({ session }) {
-  console.log("DRAWER SESSION: ", session);
+function MyDrawer({ ...session }) {
   return (
     <Drawer.Navigator initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Home} />
@@ -48,11 +48,11 @@ function MyDrawer({ session }) {
 
 const MainStack = createNativeStackNavigator();
 
-function Main({ session }) {
+function Main({ ...session }) {
   return (
-    <MainStack.Navigator initialRouteName="GetStarted" screenOptions={{ headerShown: false }}>
-      <MainStack.Screen name="GetStarted" component={GetStarted} />
-      {/* <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen> */}
+    <MainStack.Navigator screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen>
+      <MainStack.Screen name="GetStarted" component={Start} />
     </MainStack.Navigator>
   );
 }
@@ -60,11 +60,36 @@ function Main({ session }) {
 const Authstack = createNativeStackNavigator();
 
 function Auth({ session }) {
+  const [showOnboarding, setShowOnboarding] = useState(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem("alreadyLaunched").then((value) => {
+      //console.log("Value: ", value);
+      if (value === null) {
+        AsyncStorage.setItem("alreadyLaunched", "true");
+        setShowOnboarding(true);
+      } else {
+        setShowOnboarding(false);
+      }
+    });
+  }, []);
+
   return (
     <Authstack.Navigator screenOptions={{ headerShown: false }}>
-      <Authstack.Screen name="SignIn" component={SignIn} />
-      <Authstack.Screen name="Account" component={Account} initialParams={session} />
-      <Authstack.Screen name="SignUp" component={SignUp} />
+      {showOnboarding ? (
+        <>
+          <Authstack.Screen name="Onboarding" component={Onboarding} />
+          <Authstack.Screen name="SignIn" component={SignIn} />
+          <Authstack.Screen name="Account" component={Account} initialParams={session} />
+          <Authstack.Screen name="SignUp" component={SignUp} />
+        </>
+      ) : (
+        <>
+          <Authstack.Screen name="SignIn" component={SignIn} />
+          <Authstack.Screen name="SignUp" component={SignUp} />
+          <Authstack.Screen name="Account" component={Account} initialParams={session} />
+        </>
+      )}
     </Authstack.Navigator>
   );
 }
@@ -79,20 +104,10 @@ export default function App() {
       setSession(session);
     });
 
-    //console.log("SESSION: ", session);
-
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
   }, []);
-  return (
-    <NavigationContainer>
-      {/* <Appstack.Navigator initialRouteName="Onboarding" screenOptions={{ headerShown: false }}>
-        <Appstack.Screen name="Onboarding" component={Onboarding} />
-        <Appstack.Screen name="MyDrawer" component={MyDrawer} />
-        <Appstack.Screen name="Auth" component={Auth} initialParams={session} />
-      </Appstack.Navigator> */}
-      {session ? <Main session={session} /> : <Auth />}
-    </NavigationContainer>
-  );
+
+  return <NavigationContainer>{session ? <Main {...session} /> : <Auth />}</NavigationContainer>;
 }

@@ -11,7 +11,7 @@ export default function Account(session) {
   const [lastName, setlastName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
 
-  console.log("ACCOUNT SESSION: ", session);
+  //console.log("ACCOUNT SESSION: ", session);
 
   useEffect(() => {
     //console.log("AUTH SESSION: ", session);

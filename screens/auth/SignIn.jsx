@@ -68,7 +68,7 @@ export default function SignIn({ navigation }) {
           secureTextEntry={true}
         />
         <TouchableOpacity
-          className="flex items-center justify-center p-4 bg-indigo-900 rounded-lg"
+          className="flex items-center justify-center p-4 bg-gray rounded-lg"
           disabled={loading}
           onPress={() => signInWithEmail()}>
           <Text className="text-white font-semibold">{loading ? <Loading /> : "Sign In"}</Text>
@@ -77,7 +77,7 @@ export default function SignIn({ navigation }) {
           className="flex items-center justify-center p-3"
           onPress={() => navigation.navigate("SignUp")}>
           <Text>
-            Dont have an account? <Text className="text-indigo-900 font-semibold">Sign Up</Text>
+            Dont have an account? <Text className="text-blue font-semibold">Sign Up</Text>
           </Text>
         </TouchableOpacity>
         <View className="w-full border-b border-gray-300"></View>
