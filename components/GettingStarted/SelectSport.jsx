@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { Text } from "react-native";
 
 import Hockey from "../../icons/Sports/Hockey";
 import Baseball from "../../icons/Sports/Baseball";

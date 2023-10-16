@@ -51,8 +51,8 @@ const MainStack = createNativeStackNavigator();
 function Main({ ...session }) {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
-      <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen>
-      <MainStack.Screen name="GetStarted" component={Start} />
+      {/* <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen> */}
+      <MainStack.Screen name="StartTeam" component={Start} />
     </MainStack.Navigator>
   );
 }
@@ -62,16 +62,19 @@ const Authstack = createNativeStackNavigator();
 function Auth({ session }) {
   const [showOnboarding, setShowOnboarding] = useState(null);
 
+  const hasLaunched = async () => {
+    const value = await AsyncStorage.getItem("alreadyLaunched");
+    console.log("Value: ", value);
+    if (value === null) {
+      await AsyncStorage.setItem("alreadyLaunched", "true");
+      setShowOnboarding(true);
+    } else {
+      setShowOnboarding(false);
+    }
+  };
+
   useEffect(() => {
-    AsyncStorage.getItem("alreadyLaunched").then((value) => {
-      //console.log("Value: ", value);
-      if (value === null) {
-        AsyncStorage.setItem("alreadyLaunched", "true");
-        setShowOnboarding(true);
-      } else {
-        setShowOnboarding(false);
-      }
-    });
+    hasLaunched();
   }, []);
 
   return (
@@ -94,7 +97,7 @@ function Auth({ session }) {
   );
 }
 
-//const Appstack = createNativeStackNavigator();
+const Appstack = createNativeStackNavigator();
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -109,5 +112,16 @@ export default function App() {
     });
   }, []);
 
-  return <NavigationContainer>{session ? <Main {...session} /> : <Auth />}</NavigationContainer>;
+  // return <NavigationContainer>{session ? <Main {...session} /> : <Auth />}</NavigationContainer>;
+  return (
+    <NavigationContainer>
+      <Appstack.Navigator headerMode="none" screenOptions={{ headerShown: false }}>
+        {session ? (
+          <Appstack.Screen name="Main" component={Main} />
+        ) : (
+          <Appstack.Screen name="Auth" component={Auth} />
+        )}
+      </Appstack.Navigator>
+    </NavigationContainer>
+  );
 }

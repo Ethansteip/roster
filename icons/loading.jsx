@@ -4,7 +4,7 @@ const Loading = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    className="animate-spin h-5 w-5 text-white"
+    className="animate-spin h-7 w-7 text-white"
     viewBox="0 0 24 24"
     {...props}>
     <Circle cx={12} cy={12} r={10} stroke="currentColor" strokeWidth={4} className="opacity-25" />

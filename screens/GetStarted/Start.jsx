@@ -1,25 +1,39 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground } from "react-native";
 
 import CreateTeam from "roster/screens/GetStarted/CreateTeam/CreateTeam.jsx";
 
 function Start({ navigation }) {
   return (
-    <SafeAreaView className="flex-1 w-full flex-col">
-      <View className="flex h-1/2  flex-col justify-center items-center">
-        <Text className="text-3xl font-bold">Welcome To Roster 👋🏻 🏀</Text>
-        <Text className="text-lg text-gray-500">Just a few more steps to get you setup</Text>
+    <SafeAreaView className="flex-1 flex-col justify-end bg-offwhite">
+      {/* Sign-in Image */}
+      <View className="flex-1 items-center justify-center bg-gray3">
+        <ImageBackground
+          source={require("roster/screens/illustrations/placeholder.png")}
+          resizeMode="contain"
+          style={{ width: 250, height: 275 }}
+        />
       </View>
-      <View className="flex h-1/2 flex-col justify-end items-center space-y-3 mx-8 pb-10">
-        <TouchableOpacity className="p-3 shadow-lg flex justify-center items-center bg-indigo-500 border-indigo-900 border rounded-lg w-full">
-          <Text className="text-lg font-bold text-white">Join a exitsing team</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("CreateTeam")}
-          className="p-3 shadow-lg flex justify-center items-center bg-indigo-500 border border-indigo-900 rounded-lg w-full">
-          <Text className="text-lg font-bold text-white">Create a team</Text>
-        </TouchableOpacity>
+      {/* Sign-in Form */}
+      <View className="flex flex-col p-8 space-y-4 bg-white h-[60%] justify-between">
+        <View className="w-full flex flex-col">
+          <Text className="text-2xl font-bold text-gray3 text-center">Welcome To Roster 👋🏻 🏀</Text>
+          <Text className=" text-gray-500 text-center">Just a few more steps to get you setup</Text>
+        </View>
+        <View className="flex flex-col space-y-3 justify-center items-center">
+          <TouchableOpacity className="flex w-full items-center justify-center p-3 bg-gray rounded-lg">
+            <Text className="text-lg font-bold text-offwhite">Join an existing team</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex w-full items-center justify-center p-3 bg-gray rounded-lg"
+            onPress={() => navigation.navigate("CreateTeam")}>
+            <Text className="text-lg font-bold text-offwhite">Create a team</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="">
+            <Text className="text-lg text-gray">Skip</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
