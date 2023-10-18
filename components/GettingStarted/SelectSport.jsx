@@ -10,22 +10,24 @@ import Soccer from "../../icons/Sports/Soccer";
 import Other from "../../icons/Sports/Other";
 import Football from "../../icons/Sports/Football";
 
-export default function SelectSport({ name }) {
+export default function SelectSport({ name, active }) {
   const icon = (name) => {
-    if (name === "Soccer") return <Soccer />;
-    if (name === "Lacrosse") return <Lacrosse />;
-    if (name === "Baseball" || name === "Softball") return <Baseball />;
-    if (name === "Hockey") return <Hockey />;
-    if (name === "Volleyball") return <Volleyball />;
-    if (name === "Basketball") return <BasketBall />;
-    if (name === "Football") return <Football />;
-    if (name === "Other") return <Other />;
+    if (name === "Soccer") return <Soccer active={active} />;
+    if (name === "Lacrosse") return <Lacrosse active={active} />;
+    if (name === "Baseball" || name === "Softball") return <Baseball active={active} />;
+    if (name === "Hockey") return <Hockey active={active} />;
+    if (name === "Volleyball") return <Volleyball active={active} />;
+    if (name === "Basketball") return <BasketBall active={active} />;
+    if (name === "Football") return <Football active={active} />;
+    if (name === "Other") return <Other active={active} />;
   };
 
   return (
     <>
       {icon(name)}
-      <Text className="text-lg text-white font-semibold">{name}</Text>
+      <Text className={`text-lg font-semibold ${active ? "text-green" : "text-offwhite"}`}>
+        {name}
+      </Text>
     </>
   );
 }

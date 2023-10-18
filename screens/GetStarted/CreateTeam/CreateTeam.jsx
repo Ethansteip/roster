@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { supabase } from "../../../lib/supabase";
 import DropDownPicker from "react-native-dropdown-picker";
+DropDownPicker.setListMode("MODAL");
 import { usStates } from "../../../lib/States";
 import { provinces } from "../../../lib/Provinces";
 
@@ -19,18 +20,8 @@ import BackArrow from "../../../icons/BackArrow";
 import SelectSport from "../../../components/GettingStarted/SelectSport";
 
 function Screen1({ navigation }) {
-  // Team Object
-  const newTeam = {
-    teamName,
-    country,
-    state,
-    city,
-  };
-
   // Team Name
   const [teamName, setTeamName] = useState("");
-
-  // Country dropdown
   const [openCountry, setOpenCountry] = useState(false);
   const [country, setCountry] = useState(null);
   const [countries, setCountries] = useState([
@@ -38,14 +29,23 @@ function Screen1({ navigation }) {
     { label: "Canada", value: "CAN" },
   ]);
 
-  // State / province dropdown
   const [openState, setOpenState] = useState(false);
   const [state, setState] = useState(null);
-  const [states, setStates] = useState(usStates);
-
-  console.log("US STATES: ", usStates);
+  const [states, setStates] = useState([]);
 
   const [city, setCity] = useState("");
+
+  const isFilledOut = !teamName || !country || !state || !city ? false : true;
+
+  const setStateOrProvince = () => {
+    if (country === "US") {
+      setStates(usStates);
+    } else {
+      setStates(provinces);
+    }
+  };
+
+  //console.log("US STATES: ", usStates);
 
   return (
     <SafeAreaView className="flex-1 w-full flex-col bg-offwhite">
@@ -84,6 +84,7 @@ function Screen1({ navigation }) {
               open={openCountry}
               value={country}
               items={countries}
+              onChangeValue={setStateOrProvince}
               setOpen={setOpenCountry}
               setValue={setCountry}
               setItems={setCountries}
@@ -123,7 +124,10 @@ function Screen1({ navigation }) {
           </View>
         </View>
         <TouchableOpacity
-          className="flex w-full items-center justify-center p-3 bg-gray rounded-lg"
+          disabled={!isFilledOut}
+          className={`flex w-full items-center justify-center p-3 rounded-lg ${
+            isFilledOut ? "bg-gray" : "bg-[#d1d5db]"
+          }`}
           onPress={() => navigation.navigate("Screen2", { teamName, country, state, city })}>
           <Text className="text-lg font-bold text-offwhite">Next</Text>
         </TouchableOpacity>
@@ -134,32 +138,37 @@ function Screen1({ navigation }) {
 
 function Screen2({ route, navigation }) {
   const { teamName, country, state, city } = route.params;
-  const newTeamSubmission = {
-    teamName,
-    country,
-    state,
-    city,
-  };
-  console.log("NEW TEAM INFO: ", newTeamSubmission);
+  //console.log("NEW TEAM INFO: ", newTeamSubmission);
 
   const [availableSports, setAvailableSports] = useState([]);
-  //const [teamName, setTeamName] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeSelection, setActiveSelection] = useState();
 
   const fetchSports = async () => {
     setLoading(true);
     const { data, error } = await supabase.from("sports").select();
-
     if (error) {
       Alert.alert(error.message);
       setLoading(false);
     }
-
     if (data) {
-      //console.log("DATA: ", data);
       setAvailableSports(data);
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const { error, data } = await supabase
+      .from("teams")
+      .insert({ name: teamName, country, state, city, sport: activeSelection })
+      .select();
+
+    console.log("TEAM SUBMISSION: ", data);
+
+    if (error) {
+      Alert.alert(error.message);
+    } else {
+      navigation.navigate("Screen3", data);
     }
   };
 
@@ -171,10 +180,10 @@ function Screen2({ route, navigation }) {
     return (
       <TouchableOpacity
         onPress={() => setActiveSelection(item.id)}
-        className={`flex justify-center items-center border border-gray-300 w-1/3 px-3 py-3 rounded-lg ${
-          activeSelection === item.id ? "bg-indigo-700" : "bg-indigo-400"
+        className={`flex justify-center items-center border-4 border-offwhite bg-gray w-[33%] py-3 rounded-lg ${
+          activeSelection === item.id ? "border-green" : "bg-indigo-400"
         }`}>
-        <SelectSport name={item.name} />
+        <SelectSport name={item.name} active={activeSelection === item.id} />
       </TouchableOpacity>
     );
   };
@@ -182,7 +191,7 @@ function Screen2({ route, navigation }) {
   function SportSelectionList() {
     return (
       <FlatList
-        className="mt-5"
+        className="mt-5 flex"
         data={availableSports}
         renderItem={renderSelectSport}
         keyExtractor={(item) => item.id}
@@ -194,48 +203,47 @@ function Screen2({ route, navigation }) {
   return (
     <SafeAreaView className="flex-1 w-full flex-col justify-between bg-white">
       <View className="flex flex-col space-y-5 p-5">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
           <BackArrow />
         </TouchableOpacity>
         <View className="flex flex-col">
-          <Text className="text-2xl font-bold">Team Information</Text>
+          <Text className="text-3xl font-bold text-gray3">Choose your sport</Text>
         </View>
-        {/* <TextInput
-          autoCapitalize={"words"}
-          placeholder="Team Name"
-          className="bg-gray-50 text-xl pb-3 h-14 border-2 border-gray-300 text-gray-900 rounded-lg focus:ring-indigo-900 focus:border-indigo-900 block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          value={teamName}
-          onChangeText={(text) => setTeamName(text)}
-        /> */}
-        {/* <View className="flex flex-row">{SelectSportIcons}</View> */}
-        {/* <Text>{availableSports.toString()}</Text> */}
         {loading ? <ActivityIndicator size="large" color="#6366f1" /> : <SportSelectionList />}
       </View>
       <View className="flex flex-col justify-end items-center mx-6 pb-5">
         <TouchableOpacity
-          onPress={() => navigation.navigate("Screen2")}
-          className="p-3 shadow-lg flex justify-center items-center bg-indigo-500 indigo-900 border-black rounded-lg w-full">
-          <Text className="text-lg font-bold text-white">Next</Text>
+          disabled={!activeSelection}
+          onPress={handleSubmit}
+          className={`flex w-full items-center justify-center p-3 rounded-lg ${
+            activeSelection ? "bg-gray" : "bg-[#d1d5db]"
+          }`}>
+          <Text className="text-lg font-bold text-offwhite">Next</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
-function Screen3({ navigation }) {
+function Screen3({ navigation, route }) {
+  console.log("DATA: ", route.params);
+
+  const data = route.params;
   return (
     <SafeAreaView className="flex-1 w-full flex-col">
-      <TouchableOpacity onPress={() => navigation.goBack()} className="p-5 rounded-full">
+      <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
         <BackArrow />
       </TouchableOpacity>
       <View className="flex h-1/2 flex-col justify-center items-center">
-        <Text className="text-3xl font-bold">Create Screen 3 👋🏻</Text>
+        <Text className="text-3xl font-bold text-center">
+          Congratulations to the {data[0].name} 👋🏻
+        </Text>
       </View>
       <View className="flex h-1/2 flex-col justify-end items-center mx-8 pb-24">
         <TouchableOpacity
-          onPress={() => navigation.navigate("Screen3")}
-          className="p-3 shadow-lg flex justify-center items-center bg-indigo-500 indigo-900 border-black rounded-lg w-full">
-          <Text className="text-lg font-bold text-white">Finish</Text>
+          onPress={() => navigation.navigate("MyDrawer")}
+          className="p-3 flex justify-center items-center bg-gray indigo-900 border-black rounded-lg w-full">
+          <Text className="text-lg font-bold text-offwhite">Finish</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
