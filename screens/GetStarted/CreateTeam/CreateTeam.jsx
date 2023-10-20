@@ -157,13 +157,27 @@ function Screen2({ route, navigation }) {
     }
   };
 
-  const handleSubmit = async () => {
-    const { error, data } = await supabase
-      .from("teams")
-      .insert({ name: teamName, country, state, city, sport: activeSelection })
-      .select();
+  const fetchSportName = async () => {
+    const { data, error } = await supabase
+      .from("sports")
+      .select("code")
+      .match({ id: activeSelection });
 
-    console.log("TEAM SUBMISSION: ", data);
+    if (error) {
+      Alert.alert(error.message);
+    } else {
+      console.log(data);
+      return data[0].code;
+    }
+  };
+
+  const handleSubmit = async () => {
+    const sportName = await fetchSportName();
+
+    const { data, error } = await supabase
+      .from("teams")
+      .insert({ name: teamName, country, state, city, sport_id: activeSelection, sport: sportName })
+      .select();
 
     if (error) {
       Alert.alert(error.message);
@@ -201,7 +215,7 @@ function Screen2({ route, navigation }) {
   }
 
   return (
-    <SafeAreaView className="flex-1 w-full flex-col justify-between bg-white">
+    <SafeAreaView className="flex-1 w-full flex-col justify-between bg-offwhite">
       <View className="flex flex-col space-y-5 p-5">
         <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
           <BackArrow />
@@ -228,18 +242,23 @@ function Screen2({ route, navigation }) {
 function Screen3({ navigation, route }) {
   console.log("DATA: ", route.params);
 
-  const data = route.params;
+  const { name } = route.params[0];
   return (
-    <SafeAreaView className="flex-1 w-full flex-col">
+    <SafeAreaView className="flex-1 w-full flex-col bg-green">
       <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
         <BackArrow />
       </TouchableOpacity>
       <View className="flex h-1/2 flex-col justify-center items-center">
-        <Text className="text-3xl font-bold text-center">
-          Congratulations to the {data[0].name} 👋🏻
+        <Text className="text-3xl font-bold text-center text-offwhite">Congratulations!</Text>
+        <Text className="text-xl mt-3 text-center text-gray">
+          You are now setup as team captain of {name}! Share this code your teammates to invite them
+          to your roster!
         </Text>
       </View>
-      <View className="flex h-1/2 flex-col justify-end items-center mx-8 pb-24">
+      <View className="flex h-1/2 flex-col justify-end items-center mx-8 space-y-3 pb-16">
+        <TouchableOpacity className="p-3 flex justify-center items-center bg-offwhite indigo-900 border-black rounded-lg w-full">
+          <Text className="text-lg font-bold text-gray">Invite Teammates</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("MyDrawer")}
           className="p-3 flex justify-center items-center bg-gray indigo-900 border-black rounded-lg w-full">
