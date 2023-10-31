@@ -4,7 +4,8 @@ import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground } from "rea
 
 import CreateTeam from "roster/screens/GetStarted/CreateTeam/CreateTeam.jsx";
 
-function Start({ navigation }) {
+function Start({ navigation, session }) {
+  //console.log("Session: ", session);
   return (
     <SafeAreaView className="flex-1 flex-col justify-end bg-offwhite">
       {/* Sign-in Image */}
@@ -41,11 +42,11 @@ function Start({ navigation }) {
 
 const Screen = createNativeStackNavigator();
 
-export default function Onboarding() {
+export default function Onboarding({ ...session }) {
   return (
     <Screen.Navigator screenOptions={{ headerShown: false }} initialRouteName="OnboardingScreen1">
       <Screen.Screen name="GetStarted" component={Start} />
-      <Screen.Screen name="CreateTeam" component={CreateTeam} />
+      <Screen.Screen name="CreateTeam">{() => <CreateTeam {...session} />}</Screen.Screen>
     </Screen.Navigator>
   );
 }

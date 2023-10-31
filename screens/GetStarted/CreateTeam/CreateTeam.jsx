@@ -138,7 +138,6 @@ function Screen1({ navigation }) {
 
 function Screen2({ route, navigation }) {
   const { teamName, country, state, city } = route.params;
-  //console.log("NEW TEAM INFO: ", newTeamSubmission);
 
   const [availableSports, setAvailableSports] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -157,7 +156,7 @@ function Screen2({ route, navigation }) {
     }
   };
 
-  const fetchSportName = async () => {
+  const fetchSelectedSportName = async () => {
     const { data, error } = await supabase
       .from("sports")
       .select("code")
@@ -172,11 +171,23 @@ function Screen2({ route, navigation }) {
   };
 
   const handleSubmit = async () => {
-    const sportName = await fetchSportName();
+    const sportName = await fetchSelectedSportName();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    console.log("USER: ", user.identities?.user_id);
 
     const { data, error } = await supabase
       .from("teams")
-      .insert({ name: teamName, country, state, city, sport_id: activeSelection, sport: sportName })
+      .insert({
+        name: teamName,
+        country,
+        state,
+        city,
+        sport_id: activeSelection,
+        sport: sportName,
+        captain_id: user.id,
+      })
       .select();
 
     if (error) {
@@ -272,10 +283,12 @@ function Screen3({ navigation, route }) {
 const Screen = createNativeStackNavigator();
 
 export default function CreateTeam() {
+  //console.log("Session: ", session);
   return (
     <Screen.Navigator screenOptions={{ headerShown: false }} initialRouteName="Screen1">
       <Screen.Screen name="Screen1" component={Screen1} />
       <Screen.Screen name="Screen2" component={Screen2} />
+      {/* <Screen.Screen name="Screen2">{() => <Screen2 {...session} />}</Screen.Screen> */}
       <Screen.Screen name="Screen3" component={Screen3} />
     </Screen.Navigator>
   );

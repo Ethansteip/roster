@@ -51,8 +51,9 @@ const MainStack = createNativeStackNavigator();
 function Main({ ...session }) {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen> */}
-      <MainStack.Screen name="StartTeam" component={Start} />
+      <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen>
+      {/* <MainStack.Screen name="StartTeam" component={Start} /> */}
+      <MainStack.Screen name="StartTeam">{() => <Start {...session} />}</MainStack.Screen>
     </MainStack.Navigator>
   );
 }
@@ -117,7 +118,7 @@ export default function App() {
     <NavigationContainer>
       <Appstack.Navigator headerMode="none" screenOptions={{ headerShown: false }}>
         {session ? (
-          <Appstack.Screen name="Main" component={Main} />
+          <Appstack.Screen name="Main">{() => <Main {...session} />}</Appstack.Screen>
         ) : (
           <Appstack.Screen name="Auth" component={Auth} />
         )}
