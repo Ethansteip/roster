@@ -9,11 +9,11 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  Platform,
-  KeyboardAvoidingView,
   ScrollView,
+  Share,
 } from "react-native";
 import { supabase } from "../../../lib/supabase";
+import TeamCode from "../../../components/TeamCode";
 import DropDownPicker from "react-native-dropdown-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 DropDownPicker.setListMode("MODAL");
@@ -259,23 +259,55 @@ function Screen2({ route, navigation }) {
 }
 
 function Screen3({ navigation, route }) {
-  console.log("DATA: ", route.params);
+  const { name, team_code } = route.params[0];
 
-  const { name } = route.params[0];
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `You are invited to join the ${name} roster! Start by downloading the roster app, then signing up and joining the team using this code - ${team_code}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
   return (
-    <SafeAreaView className="flex-1 w-full flex-col bg-green">
+    <SafeAreaView className="flex-1 w-full flex-col bg-offwhite">
       <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
         <BackArrow />
       </TouchableOpacity>
       <View className="flex h-1/2 flex-col justify-center items-center">
-        <Text className="text-3xl font-bold text-center text-offwhite">Congratulations!</Text>
-        <Text className="text-xl mt-3 text-center text-gray">
-          You are now setup as team captain of {name}! Share this code your teammates to invite them
-          to your roster!
+        {/* Celebreate icon */}
+        <View className="bg-green h-[100px] w-[100px] rounded-full flex items-center justify-center mb-3">
+          <View className="bg-gray border-[4px] border-offwhite h-[90px] w-[90px] rounded-full flex items-center justify-center">
+            <Text className="text-[40px]">🎉</Text>
+          </View>
+        </View>
+        <Text className="text-3xl font-bold text-center text-green">Success!</Text>
+        <Text className=" w-5/6 text-center text-gray">
+          <Text className="font-bold">{name}</Text> have joined the big leagues! Use your seceret
+          team code below to start inviting team mates to your roster!
         </Text>
+        {/* Team Code */}
+        <View className="flex flex-col space-y-2 items-center w-full h-auto p-5 bg-offwhite rounded-xl">
+          <TeamCode teamName={team_code} />
+          {/* <Text className="text-xs text-center w-3/4">
+            Only share this code with people you want to join your team
+          </Text> */}
+        </View>
       </View>
       <View className="flex h-1/2 flex-col justify-end items-center mx-8 space-y-3 pb-16">
-        <TouchableOpacity className="p-3 flex justify-center items-center bg-offwhite indigo-900 border-black rounded-lg w-full">
+        <TouchableOpacity
+          onPress={onShare}
+          className="p-3 flex justify-center items-center border-2 border-blue indigo-900 border-black rounded-lg w-full">
           <Text className="text-lg font-bold text-gray">Invite Teammates</Text>
         </TouchableOpacity>
         <TouchableOpacity

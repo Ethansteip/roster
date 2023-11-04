@@ -3,8 +3,9 @@ import React from "react";
 import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground } from "react-native";
 
 import CreateTeam from "roster/screens/GetStarted/CreateTeam/CreateTeam.jsx";
+import JoinTeam from "./JoinTeam/JoinTeam";
 
-function Start({ navigation, session }) {
+function Start({ navigation }) {
   //console.log("Session: ", session);
   return (
     <SafeAreaView className="flex-1 flex-col justify-end bg-offwhite">
@@ -23,8 +24,10 @@ function Start({ navigation, session }) {
           <Text className=" text-gray-500 text-center">Just a few more steps to get you setup</Text>
         </View>
         <View className="flex flex-col space-y-3 justify-center items-center">
-          <TouchableOpacity className="flex w-full items-center justify-center p-3 bg-gray rounded-lg">
-            <Text className="text-lg font-bold text-offwhite">Join an existing team</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("JoinTeam")}
+            className="flex w-full items-center justify-center p-3 bg-gray rounded-lg">
+            <Text className="text-lg font-bold text-offwhite">Join a team</Text>
           </TouchableOpacity>
           <TouchableOpacity
             className="flex w-full items-center justify-center p-3 bg-gray rounded-lg"
@@ -47,6 +50,7 @@ export default function Onboarding({ ...session }) {
     <Screen.Navigator screenOptions={{ headerShown: false }} initialRouteName="OnboardingScreen1">
       <Screen.Screen name="GetStarted" component={Start} />
       <Screen.Screen name="CreateTeam">{() => <CreateTeam {...session} />}</Screen.Screen>
+      <Screen.Screen name="JoinTeam" component={JoinTeam} />
     </Screen.Navigator>
   );
 }

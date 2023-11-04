@@ -52,7 +52,6 @@ function Main({ ...session }) {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
       <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen>
-      {/* <MainStack.Screen name="StartTeam" component={Start} /> */}
       <MainStack.Screen name="StartTeam">{() => <Start {...session} />}</MainStack.Screen>
     </MainStack.Navigator>
   );
