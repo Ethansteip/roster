@@ -264,7 +264,7 @@ function Screen3({ navigation, route }) {
   const onShare = async () => {
     try {
       const result = await Share.share({
-        message: `You are invited to join the ${name} roster! Start by downloading the roster app, then signing up and joining the team using this code - ${team_code}`,
+        message: `You are invited to join the ${name} roster! Start by downloading the roster app, then sign up and join the team using this secret code - ${team_code}`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

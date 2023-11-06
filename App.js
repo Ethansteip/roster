@@ -2,6 +2,7 @@ import "react-native-gesture-handler";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
+  DrawerToggleButton,
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
@@ -37,7 +38,13 @@ function CustomDrawerContent(props) {
 
 function MyDrawer({ ...session }) {
   return (
-    <Drawer.Navigator initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
+    <Drawer.Navigator
+      screenOptions={{
+        drawerPosition: "right",
+        headerLeft: false,
+        headerRight: () => <DrawerToggleButton />,
+      }}
+      initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Schedule" component={Schedule} />
       <Drawer.Screen name="Messages" component={Messages} />

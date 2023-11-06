@@ -34,7 +34,7 @@ function Start({ navigation }) {
             onPress={() => navigation.navigate("CreateTeam")}>
             <Text className="text-lg font-bold text-offwhite">Create a team</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="">
+          <TouchableOpacity onPress={() => navigation.navigate("MyDrawer")}>
             <Text className="text-lg text-gray">Skip</Text>
           </TouchableOpacity>
         </View>
