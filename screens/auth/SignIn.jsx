@@ -12,7 +12,6 @@ import {
   ScrollView,
 } from "react-native";
 import { supabase } from "../../lib/supabase";
-import { useKeyboardVisible } from "../../lib/hooks/hooks";
 
 import GoogleIcon from "../../icons/google";
 import Facebook from "../../icons/facebook";
@@ -23,9 +22,6 @@ export default function SignIn({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const isKeyboardVisible = useKeyboardVisible();
-
-  console.log("Keyboard Visible: ", isKeyboardVisible);
 
   async function signInWithEmail() {
     setLoading(true);

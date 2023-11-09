@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
+import { useDebounce } from "../lib/hooks/hooks";
 import {
   SafeAreaView,
   Text,
@@ -12,6 +13,9 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import SuccessModal from "../components/modal";
+import Checkmark from "../icons/checkmark";
+import Cancel from "../icons/cancel";
+import Avatar from "../components/Account/Avatar";
 
 export default function Account(session) {
   const [loading, setLoading] = useState(false);
@@ -20,17 +24,34 @@ export default function Account(session) {
   const [lastName, setlastName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
+  const [showUsernameMessage, setShowUsernameMessage] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState("");
+  const [modalText, setmodalText] = useState("");
+  const [modalSuccess, setModalSuccess] = useState(null);
+
+  const debouncedSearch = useDebounce(username);
 
   const usernameInput = useRef();
   const firstnameInput = useRef();
   const lastnameInput = useRef();
 
-  let timer;
-
-  //const [avatarUrl, setAvatarUrl] = useState("");
+  useEffect(() => {
+    if (username === originalUsername) {
+      setUsernameError("");
+      setUsernameTaken(false);
+      setShowUsernameMessage(false);
+    }
+    searchUsername();
+  }, [debouncedSearch]);
 
   useEffect(() => {
     getProfile();
+    if (username === originalUsername) {
+      setUsernameError("");
+      setUsernameTaken(false);
+      setShowUsernameMessage(false);
+    }
   }, []);
 
   async function getProfile() {
@@ -51,6 +72,7 @@ export default function Account(session) {
         setUsername(data.username);
         setfirstName(data.first_name);
         setlastName(data.last_name);
+        setOriginalUsername(data.username);
         //setAvatarUrl(data.avatar_url);
       }
     } catch (error) {
@@ -67,6 +89,16 @@ export default function Account(session) {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      if (usernameTaken) {
+        setmodalText(`The username ${username} is unavailable. Please use another name.`);
+        setModalSuccess(false);
+        setModalVisible(true);
+        setTimeout(() => {
+          setModalVisible(false);
+        }, 2000);
+        return;
+      }
+
       const updates = {
         id: session?.user.id,
         username,
@@ -79,9 +111,17 @@ export default function Account(session) {
       let { data, error } = await supabase.from("profiles").upsert(updates).select();
 
       if (error) {
-        throw error;
+        setmodalText(`Username must be greater than or equal to 3 characters.`);
+        setModalSuccess(false);
+        setModalVisible(true);
+        setTimeout(() => {
+          setModalVisible(false);
+        }, 1500);
       }
       if (data) {
+        setShowUsernameMessage(false);
+        setmodalText("Successfully saved profile.");
+        setModalSuccess(true);
         setModalVisible(true);
         setTimeout(() => {
           setModalVisible(false);
@@ -96,41 +136,62 @@ export default function Account(session) {
     }
   }
 
-  const UserNameAvailable = async (input) => {
-    clearTimeout(timer);
-    setUsername(input);
-    timer = setTimeout(() => {
-      const userNameExists = searchUserNames(username);
-      if (userNameExists) {
-        setUsernameTaken(true);
+  async function searchUsername() {
+    if (username.length < 3) {
+      setUsernameTaken(true);
+      setUsernameError("Username must be atleast 3 characaters long.");
+      setShowUsernameMessage(true);
+      return;
+    }
+    try {
+      const { data } = await supabase.from("profiles").select().eq("username", debouncedSearch);
+
+      console.log("SESSION: ", session?.user.id);
+
+      if (data.length > 0) {
+        // if we find the existing users username, do nothing / show nothing
+        if (session?.user.id === data[0].id) {
+          setUsernameError("");
+          setUsernameTaken(false);
+          setShowUsernameMessage(false);
+          return;
+          // else, let the user know the name is already taken
+        } else {
+          setUsernameTaken(true);
+          setUsernameError("User name is already taken.");
+          setShowUsernameMessage(true);
+          return;
+        }
+        // else, let the user know the name is available
+      } else {
+        setUsernameTaken(false);
+        setUsernameError("Username available!");
+        setShowUsernameMessage(true);
+        return;
       }
-      setUsernameTaken(false);
-    }, 1000);
-  };
-
-  const searchUserNames = async (input) => {
-    const { data, error } = await supabase.from("profiles").select().eq("username", input);
-
-    if (error) {
-      Alert.alert("Error: ", error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
     }
-    if (data.length > 0) {
-      console.log("USER NAME FOUND: ", data);
-      return true;
-    } else {
-      return false;
-    }
-  };
+  }
 
   return (
     <SafeAreaView className="flex-1 h-[100%] w-full flex-col bg-offwhite">
       {/* Success modal */}
-      <SuccessModal text={"Profile saved successfully"} visible={modalVisible} />
-      <View className="w-full flex-1 flex-col justify-between p-5">
+      <SuccessModal text={modalText} success={modalSuccess} visible={modalVisible} />
+      <View className="w-full flex-1 flex-col justify-between px-5">
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}>
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "space-between",
+          }}>
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+            {/* Profile Picture */}
+            <View className="w-full h-auto flex items-center justify-center mt-5">
+              <Avatar width="w-24" height="h-24" />
+            </View>
             <View className="flex flex-col space-y-3 mt-5">
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">Email</Text>
@@ -149,15 +210,22 @@ export default function Account(session) {
                 <TextInput
                   className="bg-gray-500 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue focus:border-opacity-50 focus:border-2 block w-full p-3"
                   value={username}
-                  onChangeText={(value) => UserNameAvailable(value)}
+                  onChangeText={(value) => setUsername(value)}
                   ref={usernameInput}
                   returnKeyType="next"
                   onSubmitEditing={() => {
                     firstnameInput.current.focus();
                   }}
                 />
-                {usernameTaken ?? (
-                  <Text className="text-[#ff4512] text-xs">username is not availaible.</Text>
+                {showUsernameMessage && (
+                  <View className="flex flex-row items-center space-x-1">
+                    {usernameTaken ? (
+                      <Cancel width={16} height={16} />
+                    ) : (
+                      <Checkmark width={16} height={16} />
+                    )}
+                    <Text className="ml-1 text-xs">{usernameError}</Text>
+                  </View>
                 )}
               </View>
               <View className="flex flex-col space-y-2">
@@ -190,12 +258,16 @@ export default function Account(session) {
           </KeyboardAwareScrollView>
         </ScrollView>
         <TouchableOpacity
-          disabled={loading}
+          disabled={loading || usernameTaken}
           className={` w-full items-center justify-end p-3 rounded-lg mb-2 ${
-            !loading ? "bg-offwhite border-2 border-blue" : "bg-[#d1d5db]"
+            !usernameTaken
+              ? "bg-offwhite border-2 border-blue"
+              : "bg-offwhite border-2 border-[#cacaca]"
           }`}
           onPress={() => updateProfile({ username, firstName, lastName })}>
-          <Text className="text-lg font-bold text-gray">Update Profile</Text>
+          <Text className={`text-lg font-bold ${!usernameTaken ? "text-gray" : "text-[#cacaca]"}`}>
+            Update Profile
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           disabled={loading}
