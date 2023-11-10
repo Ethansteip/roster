@@ -10,12 +10,15 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  Pressable,
+  Button,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import SuccessModal from "../components/modal";
 import Checkmark from "../icons/checkmark";
 import Cancel from "../icons/cancel";
 import Avatar from "../components/Account/Avatar";
+import Upload from "../icons/upload";
 
 export default function Account(session) {
   const [loading, setLoading] = useState(false);
@@ -189,8 +192,11 @@ export default function Account(session) {
           }}>
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             {/* Profile Picture */}
-            <View className="w-full h-auto flex items-center justify-center mt-5">
+            <View className="relative w-full h-auto flex items-center justify-center mt-5">
               <Avatar width="w-24" height="h-24" />
+              <Pressable className="fixed bottom-7 left-7 h-8 w-8 rounded-full flex items-center justify-center bg-offwhite shadow">
+                <Upload fill="gray" width={20} height={20} />
+              </Pressable>
             </View>
             <View className="flex flex-col space-y-3 mt-5">
               <View className="flex flex-col space-y-2">
