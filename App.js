@@ -1,64 +1,22 @@
 import "react-native-gesture-handler";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerToggleButton,
-  DrawerItemList,
-  DrawerItem,
-} from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { supabase } from "./lib/supbase/supabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import Home from "./screens/home/Home";
-import Schedule from "./screens/schedule/Schedule";
-import Messages from "./screens/chat/Messages";
-import Onboarding from "./screens/on-boarding/onboarding";
 import SignIn from "./screens/auth/sign-in";
 import SignUp from "./screens/auth/sign-up";
-import Account from "./screens/account/Account";
 import Start from "./screens/on-boarding/start";
-
-//import { Button } from "react-native-elements";
+import MainScreen from "./navigation/home/drawer/MainScreen";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-const Drawer = createDrawerNavigator();
-
-function CustomDrawerContent(props) {
-  return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
-      <DrawerItem label="Sign Out" onPress={() => supabase.auth.signOut()} />
-    </DrawerContentScrollView>
-  );
-}
-
-function MyDrawer({ ...session }) {
-  return (
-    <Drawer.Navigator
-      screenOptions={{
-        drawerPosition: "right",
-        headerLeft: false,
-        headerRight: () => <DrawerToggleButton />,
-      }}
-      initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Schedule" component={Schedule} />
-      <Drawer.Screen name="Messages" component={Messages} />
-      <Drawer.Screen name="Account">{() => <Account {...session} />}</Drawer.Screen>
-    </Drawer.Navigator>
-  );
-}
 
 const MainStack = createNativeStackNavigator();
 
 function Main({ ...session }) {
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
-      <MainStack.Screen name="MyDrawer">{() => <MyDrawer {...session} />}</MainStack.Screen>
+      <MainStack.Screen name="MainScreen">{() => <MainScreen {...session} />}</MainStack.Screen>
       <MainStack.Screen name="StartTeam">{() => <Start {...session} />}</MainStack.Screen>
     </MainStack.Navigator>
   );
