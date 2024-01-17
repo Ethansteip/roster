@@ -2,43 +2,40 @@ import React, { useState } from "react";
 import {
   Alert,
   ImageBackground,
-  SafeAreaView,
   TextInput,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
   View,
   Text,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../lib/supbase/supabase";
 
-import GoogleIcon from "../../icons/google";
-import Apple from "../../icons/apple";
-import Facebook from "../../icons/facebook";
-import Loading from "../../icons/loading";
+import GoogleIcon from "../../components/icons/general/google";
+import Facebook from "../../components/icons/general/facebook";
+import Apple from "../../components/icons/general/apple";
+import Loading from "../../components/icons/general/loading";
 
-export default function SignUp({ navigation }) {
+export default function SignIn({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmationPassword, setConfirmationPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function signUpWithEmail() {
+  async function signInWithEmail() {
     setLoading(true);
-    // check that passwords match
-    if (password === confirmationPassword) {
-      const { error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-      });
 
-      if (error) Alert.alert(error.message);
-      setLoading(false);
-      navigation.navigate("Main", { screen: "StartTeam" });
-    } else {
-      Alert.alert("Passwords do not match - please try again");
-      setLoading(false);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      Alert.alert(error.message);
+      console.log("Error: ", error);
     }
+
+    setLoading(false);
   }
 
   return (
@@ -48,19 +45,19 @@ export default function SignUp({ navigation }) {
         keyboardVerticalOffset={20}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1">
-        <View className="flex-1 bg-white items-center justify-center bg-gray3">
+        <View className="flex h-1/3 items-center justify-center bg-gray3">
           <View className="flex h-full w-full justify-center items-center">
             <ImageBackground
-              source={require("roster/screens/illustrations/placeholder.png")}
+              source={require("roster/assets/general/placeholder.png")}
               resizeMode="contain"
               style={{ width: "100%", height: "100%" }}
             />
           </View>
         </View>
         {/* Sign-in Form */}
-        <View className="flex flex-col p-8 space-y-4 bg-white">
-          <View className="w-full flex flex-col">
-            <Text className="text-4xl font-bold text-indigo-900">Sign Up For Roster</Text>
+        <View className="flex-1 flex-col p-8 space-y-4 bg-white z-5">
+          <View className="w-full flex-col">
+            <Text className="text-4xl font-bold text-indigo-900">Sign In</Text>
             <Text className="text-lg text-gray-500">Your Recreational Sports Hub</Text>
           </View>
           <TextInput
@@ -79,28 +76,20 @@ export default function SignUp({ navigation }) {
             autoCapitalize={"none"}
             secureTextEntry={true}
           />
-          <TextInput
-            placeholder="Confirm Password"
-            className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={confirmationPassword}
-            onChangeText={(text) => setConfirmationPassword(text)}
-            autoCapitalize={"none"}
-            secureTextEntry={true}
-          />
           <TouchableOpacity
             className="flex items-center justify-center p-3 bg-gray rounded-lg"
-            disabled={loading}
-            onPress={() => signUpWithEmail()}>
+            disabled={!email || !password || loading}
+            onPress={() => signInWithEmail()}>
             <Text className="text-offwhite text-lg font-bold">
-              {loading ? <Loading /> : "Sign Up"}
+              {loading ? <Loading /> : "Sign In"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             className="flex items-center justify-center p-3"
-            onPress={() => navigation.navigate("SignIn")}>
+            onPress={() => navigation.navigate("SignUp")}>
             <Text className="text-gray-500 tracking-wide">
-              Already have an account?{" "}
-              <Text className="text-blue font-semibold tracking-wide">Sign In</Text>
+              Dont have an account?
+              <Text className="text-blue font-semibold tracking-wide"> Sign Up</Text>
             </Text>
           </TouchableOpacity>
           <View className="w-full border-b border-gray-300"></View>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, View, Text } from "react-native";
-import Checkmark from "../icons/checkmark";
-import Cancel from "../icons/cancel";
+import Checkmark from "../icons/general/checkmark";
+import Cancel from "../icons/general/cancel";
 
 const SuccessModal = ({ visible, text, success }) => {
   return (

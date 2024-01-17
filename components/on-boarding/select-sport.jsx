@@ -1,14 +1,14 @@
 import React from "react";
 import { Text } from "react-native";
 
-import Hockey from "../../icons/Sports/Hockey";
-import Baseball from "../../icons/Sports/Baseball";
-import BasketBall from "../../icons/Sports/Basketball";
-import Volleyball from "../../icons/Sports/Volleyball";
-import Lacrosse from "../../icons/Sports/Lacrosse";
-import Soccer from "../../icons/Sports/Soccer";
-import Other from "../../icons/Sports/Other";
-import Football from "../../icons/Sports/Football";
+import Hockey from "../icons/sports/Hockey";
+import Baseball from "../icons/sports/Baseball";
+import BasketBall from "../icons/sports/Basketball";
+import Volleyball from "../icons/sports/Volleyball";
+import Lacrosse from "../icons/sports/Lacrosse";
+import Soccer from "../icons/sports/Soccer";
+import Other from "../icons/sports/Other";
+import Football from "../icons/sports/Football";
 
 export default function SelectSport({ name, active }) {
   const icon = (name) => {

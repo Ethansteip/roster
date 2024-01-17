@@ -2,8 +2,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { View, Text, TouchableOpacity, SafeAreaView, ImageBackground } from "react-native";
 
-import CreateTeam from "roster/screens/GetStarted/CreateTeam/CreateTeam.jsx";
-import JoinTeam from "./JoinTeam/JoinTeam";
+import CreateProfile from "./create-profile";
+import CreateTeam from "./create-team";
+import JoinTeam from "./join-team";
 
 function Start({ navigation }) {
   //console.log("Session: ", session);
@@ -12,7 +13,7 @@ function Start({ navigation }) {
       {/* Sign-in Image */}
       <View className="flex-1 items-center justify-center bg-gray3">
         <ImageBackground
-          source={require("roster/screens/illustrations/placeholder.png")}
+          source={require("roster/assets/general/placeholder.png")}
           resizeMode="contain"
           style={{ width: 250, height: 275 }}
         />
@@ -48,6 +49,7 @@ const Screen = createNativeStackNavigator();
 export default function Onboarding({ ...session }) {
   return (
     <Screen.Navigator screenOptions={{ headerShown: false }} initialRouteName="OnboardingScreen1">
+      <Screen.Screen name="CreateProfile">{() => <CreateProfile {...session} />}</Screen.Screen>
       <Screen.Screen name="GetStarted" component={Start} />
       <Screen.Screen name="CreateTeam">{() => <CreateTeam {...session} />}</Screen.Screen>
       <Screen.Screen name="JoinTeam" component={JoinTeam} />

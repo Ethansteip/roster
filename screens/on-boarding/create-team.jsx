@@ -12,16 +12,16 @@ import {
   ScrollView,
   Share,
 } from "react-native";
-import { supabase } from "../../../lib/supabase";
-import TeamCode from "../../../components/TeamCode";
+import { supabase } from "../../lib/supbase/supabase";
+import TeamCode from "../../components/on-boarding/team-code";
 import DropDownPicker from "react-native-dropdown-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 DropDownPicker.setListMode("MODAL");
-import { usStates } from "../../../lib/States";
-import { provinces } from "../../../lib/Provinces";
+import { usStates } from "../../lib/constants/States";
+import { provinces } from "../../lib/constants/Provinces";
 
-import BackArrow from "../../../icons/BackArrow";
-import SelectSport from "../../../components/GettingStarted/SelectSport";
+import BackArrow from "../../components/icons/general/BackArrow";
+import SelectSport from "../../components/on-boarding/select-sport";
 
 function Screen1({ navigation }) {
   // Team Name

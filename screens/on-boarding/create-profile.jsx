@@ -1,7 +1,10 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { supabase } from "../lib/supabase";
-import { useDebounce } from "../lib/hooks/hooks";
+import { supabase } from "../../lib/supbase/supabase";
+import { useDebounce } from "../../lib/hooks/hooks";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { decode } from "base64-arraybuffer";
 import {
   SafeAreaView,
   Text,
@@ -10,34 +13,39 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
-  Pressable,
-  Button,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import SuccessModal from "../components/modal";
-import Checkmark from "../icons/checkmark";
-import Cancel from "../icons/cancel";
-import Avatar from "../components/Account/Avatar";
-import Upload from "../icons/upload";
+import SuccessModal from "../../components/forms/modal";
+import Checkmark from "../../components/icons/general/checkmark";
+import Cancel from "../../components/icons/general/cancel";
+import Avatar from "../../components/account/avatar";
 
-export default function Account(session) {
+export default function CreateProfile(session) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [firstName, setfirstName] = useState("");
   const [lastName, setlastName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(
+    `https://api.dicebear.com/7.x/thumbs/svg?seed=${Math.floor(100000 + Math.random() * 900000)}`
+  );
+  const [avatarImage, setAvatarImage] = useState(null);
+  //const [Image, setImageData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [usernameError, setUsernameError] = useState("");
   const [showUsernameMessage, setShowUsernameMessage] = useState(false);
-  const [originalUsername, setOriginalUsername] = useState("");
+  const [originalUsername] = useState("");
   const [modalText, setmodalText] = useState("");
   const [modalSuccess, setModalSuccess] = useState(null);
 
   const debouncedSearch = useDebounce(username);
+  const navigation = useNavigation();
 
   const usernameInput = useRef();
   const firstnameInput = useRef();
   const lastnameInput = useRef();
+
+  const disableButton = usernameTaken || !username || !firstName || !lastName;
 
   useEffect(() => {
     if (username === originalUsername) {
@@ -49,43 +57,12 @@ export default function Account(session) {
   }, [debouncedSearch]);
 
   useEffect(() => {
-    getProfile();
     if (username === originalUsername) {
       setUsernameError("");
       setUsernameTaken(false);
       setShowUsernameMessage(false);
     }
   }, []);
-
-  async function getProfile() {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      let { data, error, status } = await supabase
-        .from("profiles")
-        .select(`username, first_name, last_name, avatar_url`)
-        .eq("id", session?.user.id)
-        .single();
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
-        setUsername(data.username);
-        setfirstName(data.first_name);
-        setlastName(data.last_name);
-        setOriginalUsername(data.username);
-        //setAvatarUrl(data.avatar_url);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function updateProfile({ username, firstName, lastName, avatar_url }) {
     try {
@@ -102,6 +79,15 @@ export default function Account(session) {
         return;
       }
 
+      // upload avatar
+      await uploadAvatar();
+      // Retrieve uploaded avatar url
+      const { data: avatar } = await supabase.storage
+        .from("avatares")
+        .getPublicUrl(`${session?.user.email}.png`);
+
+      setAvatarUrl(avatar);
+
       const updates = {
         id: session?.user.id,
         username,
@@ -111,6 +97,7 @@ export default function Account(session) {
         updated_at: new Date(),
       };
 
+      await uploadAvatar();
       let { data, error } = await supabase.from("profiles").upsert(updates).select();
 
       if (error) {
@@ -128,6 +115,7 @@ export default function Account(session) {
         setModalVisible(true);
         setTimeout(() => {
           setModalVisible(false);
+          navigation.navigate("GetStarted");
         }, 1500);
       }
     } catch (error) {
@@ -148,8 +136,6 @@ export default function Account(session) {
     }
     try {
       const { data } = await supabase.from("profiles").select().eq("username", debouncedSearch);
-
-      console.log("SESSION: ", session?.user.id);
 
       if (data.length > 0) {
         // if we find the existing users username, do nothing / show nothing
@@ -179,6 +165,43 @@ export default function Account(session) {
     }
   }
 
+  async function pickImage() {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+
+    //console.log("IMAGE PICKER RESULT: ", result);
+
+    if (!result.canceled) {
+      setAvatarUrl(result.assets[0].uri);
+      setAvatarImage(result.assets[0].base64);
+      return result;
+    }
+  }
+
+  async function uploadAvatar() {
+    try {
+      const { error } = await supabase.storage
+        .from("avatars")
+        .upload(`${session?.user.email}.png`, decode(avatarImage), {
+          contentType: "image/png",
+        });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    } finally {
+      console.log("FINISHED UPLOADING IMAGE!");
+    }
+  }
+
   return (
     <SafeAreaView className="flex-1 h-[100%] w-full flex-col bg-offwhite">
       {/* Success modal */}
@@ -191,14 +214,18 @@ export default function Account(session) {
             justifyContent: "space-between",
           }}>
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
-            {/* Profile Picture */}
-            <View className="relative w-full h-auto flex items-center justify-center mt-5">
-              <Avatar width="w-24" height="h-24" />
-              <Pressable className="fixed bottom-7 left-7 h-8 w-8 rounded-full flex items-center justify-center bg-offwhite shadow">
-                <Upload fill="gray" width={20} height={20} />
-              </Pressable>
+            <View className="flex flex-col mt-5">
+              <Text className="text-3xl font-bold text-gray3">Create your profile</Text>
             </View>
             <View className="flex flex-col space-y-3 mt-5">
+              {/* Profile Picture */}
+              <View className="w-full flex h-auto items-center justify-center mt-3">
+                <TouchableOpacity onPress={pickImage} className="flex items-center justify-center">
+                  <Avatar src={avatarUrl} />
+                  <Text className="text-gray mt-2">Edit</Text>
+                </TouchableOpacity>
+              </View>
+              {/*  */}
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">Email</Text>
                 <TextInput
@@ -264,22 +291,16 @@ export default function Account(session) {
           </KeyboardAwareScrollView>
         </ScrollView>
         <TouchableOpacity
-          disabled={loading || usernameTaken}
+          disabled={loading || disableButton}
           className={` w-full items-center justify-end p-3 rounded-lg mb-2 ${
-            !usernameTaken
-              ? "bg-offwhite border-2 border-blue"
-              : "bg-offwhite border-2 border-[#cacaca]"
+            disableButton
+              ? "bg-offwhite border-2 border-[#cacaca]"
+              : "bg-offwhite border-2 border-blue"
           }`}
           onPress={() => updateProfile({ username, firstName, lastName })}>
-          <Text className={`text-lg font-bold ${!usernameTaken ? "text-gray" : "text-[#cacaca]"}`}>
-            Update Profile
+          <Text className={`text-lg font-bold ${disableButton ? "text-[#cacaca]" : "text-gray"}`}>
+            Save Profile
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={loading}
-          className="w-full items-center justify-end p-3 rounded-lg bg-gray"
-          onPress={() => supabase.auth.signOut()}>
-          <Text className="text-lg font-bold text-offwhite">Sign Out</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -10,8 +10,8 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
-import { supabase } from "../../../lib/supabase";
-import BackArrow from "../../../icons/BackArrow";
+import { supabase } from "../../lib/supbase/supabase";
+import BackArrow from "../../components/icons/general/BackArrow";
 
 function Screen1({ navigation }) {
   const first = useRef();

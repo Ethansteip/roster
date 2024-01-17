@@ -9,17 +9,17 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { supabase } from "./lib/supabase";
+import { supabase } from "./lib/supbase/supabase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Home from "./screens/Home";
-import Schedule from "./screens/Schedule";
-import Messages from "./screens/Messages";
-import Onboarding from "./screens/onboarding/Onboarding";
-import SignIn from "./screens/auth/SignIn";
-import SignUp from "./screens/auth/SignUp";
-import Account from "./screens/Account";
-import Start from "./screens/GetStarted/Start";
+import Home from "./screens/home/Home";
+import Schedule from "./screens/schedule/Schedule";
+import Messages from "./screens/chat/Messages";
+import Onboarding from "./screens/on-boarding/onboarding";
+import SignIn from "./screens/auth/sign-in";
+import SignUp from "./screens/auth/sign-up";
+import Account from "./screens/account/Account";
+import Start from "./screens/on-boarding/start";
 
 //import { Button } from "react-native-elements";
 
@@ -81,25 +81,15 @@ function Auth({ session }) {
   };
 
   useEffect(() => {
+    ``;
     hasLaunched();
   }, []);
 
   return (
     <Authstack.Navigator screenOptions={{ headerShown: false }}>
-      {showOnboarding ? (
-        <>
-          <Authstack.Screen name="Onboarding" component={Onboarding} />
-          <Authstack.Screen name="SignIn" component={SignIn} />
-          <Authstack.Screen name="Account" component={Account} initialParams={session} />
-          <Authstack.Screen name="SignUp" component={SignUp} />
-        </>
-      ) : (
-        <>
-          <Authstack.Screen name="SignIn" component={SignIn} />
-          <Authstack.Screen name="SignUp" component={SignUp} />
-          <Authstack.Screen name="Account" component={Account} initialParams={session} />
-        </>
-      )}
+      {/* <Authstack.Screen name="Onboarding" component={Onboarding} /> */}
+      <Authstack.Screen name="SignIn" component={SignIn} />
+      <Authstack.Screen name="SignUp" component={SignUp} />
     </Authstack.Navigator>
   );
 }
