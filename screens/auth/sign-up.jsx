@@ -37,7 +37,7 @@ export default function SignUp({ navigation }) {
 
       if (error) Alert.alert(error.message);
       setLoading(false);
-      navigation.navigate("Main", { screen: "StartTeam" });
+      navigation.navigate("Main", { screen: "GetStarted" });
     } else {
       Alert.alert("Passwords do not match - please try again");
       setLoading(false);

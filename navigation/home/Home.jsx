@@ -6,11 +6,11 @@ import {
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
-import Home from "../../../screens/home/Home";
-import Schedule from "../../../screens/schedule/Schedule";
-import Messages from "../../../screens/chat/Messages";
-import Account from "../../../screens/account/Account";
-import { supabase } from "../../../lib/supbase/supabase";
+import Home from "../../screens/home/Home";
+import Schedule from "../../screens/schedule/Schedule";
+import Messages from "../../screens/chat/Messages";
+import Account from "../../screens/account/Account";
+import { supabase } from "../../lib/supbase/supabase";
 
 const Drawer = createDrawerNavigator();
 
@@ -23,7 +23,7 @@ const CustomDrawerContent = (props) => {
   );
 };
 
-export const MainScreen = ({ ...session }) => {
+export const HomeNavigation = ({ ...session }) => {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -40,4 +40,4 @@ export const MainScreen = ({ ...session }) => {
   );
 };
 
-export default MainScreen;
+export default HomeNavigation;
