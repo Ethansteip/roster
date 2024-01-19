@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -30,6 +30,14 @@ const Screen1 = ({ navigation }) => {
   const teamCode = [digit1, digit2, digit3, digit4, digit5, digit6];
   const teamCodeJoined = teamCode.join("");
   const fullCode = digit1 && digit2 && digit3 && digit4 && digit5 && digit6;
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("transitionEnd", (e) => {
+      first.current?.focus();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const verifyTeamExists = async () => {
     const { data, error } = await supabase.from("teams").select().eq("team_code", teamCodeJoined);
@@ -121,7 +129,6 @@ const Screen1 = ({ navigation }) => {
               placeholder="-"
               ref={first}
               autoCapitalize="none"
-              autoFocus={!digit1}
               maxLength={1}
               value={digit1}
               onChangeText={(value) => {

@@ -20,12 +20,16 @@ import Checkmark from "../../components/icons/general/checkmark";
 import Cancel from "../../components/icons/general/cancel";
 import Avatar from "../../components/account/avatar";
 import Loading from "../../components/icons/general/loading";
+import styles from "../../styles/forms";
 
 export default function CreateProfile(session) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
-  const [firstName, setfirstName] = useState("");
-  const [lastName, setlastName] = useState("");
+  const [usernameFocused, setUsernameFocused] = useState(false);
+  const [firstName, setFirstname] = useState("");
+  const [firstnameFocused, setFirstnameFocused] = useState(false);
+  const [lastName, setLastname] = useState("");
+  const [lastnameFocused, setLastnameFocused] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(
     `https://api.dicebear.com/7.x/thumbs/svg?seed=${Math.floor(100000 + Math.random() * 900000)}`
   );
@@ -64,6 +68,14 @@ export default function CreateProfile(session) {
       setShowUsernameMessage(false);
     }
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("transitionEnd", (e) => {
+      usernameInput.current?.focus();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   async function updateProfile({ username, firstName, lastName, avatar_url }) {
     try {
@@ -110,14 +122,15 @@ export default function CreateProfile(session) {
         }, 1500);
       }
       if (data) {
-        setShowUsernameMessage(false);
-        setmodalText("Successfully saved profile.");
-        setModalSuccess(true);
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-          navigation.navigate("GetStarted");
-        }, 1500);
+        // setShowUsernameMessage(false);
+        // setmodalText("Successfully saved profile.");
+        // setModalSuccess(true);
+        // setModalVisible(true);
+        // setTimeout(() => {
+        //   setModalVisible(false);
+        //   navigation.navigate("GetStarted");
+        // }, 1500);
+        navigation.navigate("GetStarted");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -176,8 +189,6 @@ export default function CreateProfile(session) {
       base64: true,
     });
 
-    //console.log("IMAGE PICKER RESULT: ", result);
-
     if (!result.canceled) {
       setAvatarUrl(result.assets[0].uri);
       setAvatarImage(result.assets[0].base64);
@@ -229,28 +240,40 @@ export default function CreateProfile(session) {
               {/*  */}
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">Email</Text>
-                <TextInput
-                  editable={false}
-                  selectTextOnFocus={false}
-                  disabled={true}
-                  className="bg-gray-500 h-12 border border-[#c1c1c1] bg-[#f1f1f1] text-gray-900 text-sm rounded-lg block w-full p-3"
-                  value={session?.user.email}
-                />
+                {/* Email Input */}
+                <View style={styles.input.inputContainer}>
+                  <TextInput
+                    editable={false}
+                    style={styles.input.input}
+                    placeholder={session?.user.email}
+                    disabled={true}
+                  />
+                </View>
               </View>
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">
                   Username<Text className="text-green"> *</Text>
                 </Text>
-                <TextInput
-                  className="bg-gray-500 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue focus:border-opacity-50 focus:border-2 block w-full p-3"
-                  value={username}
-                  onChangeText={(value) => setUsername(value)}
-                  ref={usernameInput}
-                  returnKeyType="next"
-                  onSubmitEditing={() => {
-                    firstnameInput.current.focus();
-                  }}
-                />
+                {/* Email Input */}
+                <View
+                  style={[
+                    styles.input.inputContainer,
+                    usernameFocused ? { borderColor: "#4bad9c" } : { borderColor: "lightgray" },
+                  ]}>
+                  <TextInput
+                    onFocus={() => setUsernameFocused(true)}
+                    onBlur={() => setUsernameFocused(false)}
+                    placeholder="Username"
+                    style={styles.input.input}
+                    value={username}
+                    onChangeText={(value) => setUsername(value)}
+                    ref={usernameInput}
+                    returnKeyType="next"
+                    onSubmitEditing={() => {
+                      firstnameInput.current.focus();
+                    }}
+                  />
+                </View>
                 {showUsernameMessage && (
                   <View className="flex flex-row items-center space-x-1">
                     {usernameTaken ? (
@@ -266,27 +289,47 @@ export default function CreateProfile(session) {
                 <Text className="text-gray-100 text-lg">
                   First Name<Text className="text-green"> *</Text>
                 </Text>
-                <TextInput
-                  className="bg-gray-500 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue focus:border-opacity-50 focus:border-2 block w-full p-3"
-                  value={firstName}
-                  onChangeText={(value) => setfirstName(value)}
-                  ref={firstnameInput}
-                  returnKeyType="next"
-                  onSubmitEditing={() => {
-                    lastnameInput.current.focus();
-                  }}
-                />
+                <View
+                  style={[
+                    styles.input.inputContainer,
+                    firstnameFocused ? { borderColor: "#4bad9c" } : { borderColor: "lightgray" },
+                  ]}>
+                  <TextInput
+                    onFocus={() => setFirstnameFocused(true)}
+                    onBlur={() => setFirstnameFocused(false)}
+                    placeholder="First Name"
+                    style={styles.input.input}
+                    value={firstName}
+                    onChangeText={(value) => setFirstname(value)}
+                    ref={firstnameInput}
+                    returnKeyType="next"
+                    onSubmitEditing={() => {
+                      lastnameInput.current.focus();
+                    }}
+                  />
+                </View>
               </View>
+              {/* Last Name Input */}
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">
                   Last Name<Text className="text-green"> *</Text>
                 </Text>
-                <TextInput
-                  className="bg-gray-500 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue focus:border-opacity-50 focus:border-2 block w-full p-3"
-                  value={lastName}
-                  onChangeText={(value) => setlastName(value)}
-                  ref={lastnameInput}
-                />
+                <View
+                  style={[
+                    styles.input.inputContainer,
+                    lastnameFocused ? { borderColor: "#4bad9c" } : { borderColor: "lightgray" },
+                  ]}>
+                  <TextInput
+                    onFocus={() => setLastnameFocused(true)}
+                    onBlur={() => setLastnameFocused(false)}
+                    placeholder="First Name"
+                    style={styles.input.input}
+                    value={lastName}
+                    onChangeText={(value) => setLastname(value)}
+                    ref={lastnameInput}
+                    returnKeyType="next"
+                  />
+                </View>
               </View>
             </View>
           </KeyboardAwareScrollView>

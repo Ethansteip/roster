@@ -8,38 +8,63 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  TextInput,
 } from "react-native";
 import { supabase } from "../../lib/supbase/supabase";
-import { InputField } from "../../components/forms/Input";
 
 import GoogleIcon from "../../components/icons/general/google";
 import Apple from "../../components/icons/general/apple";
 import Facebook from "../../components/icons/general/facebook";
 import Loading from "../../components/icons/general/loading";
+import styles from "../../styles/forms";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function SignUp({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmationPassword, setConfirmationPassword] = useState("");
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const emailRef = useRef();
   const passwordRef = useRef();
   const confirmationPasswordRef = useRef();
 
+  const validatePasswords = (password, confirmationPassword) => {
+    return password === confirmationPassword;
+  };
+
+  /**
+   * Signs up a user with email and password.
+   */
+
   async function signUpWithEmail() {
     setLoading(true);
-    // check that passwords match
-    if (password === confirmationPassword) {
-      const { error } = await supabase.auth.signUp({
+
+    // Validate passwords
+    if (!validatePasswords(password, confirmationPassword)) {
+      setLoading(false);
+      return Alert.alert("Passwords do not match - please try again");
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
 
-      if (error) Alert.alert(error.message);
-      setLoading(false);
-      navigation.navigate("Start", { screen: "CreateProfile" });
-    } else {
-      Alert.alert("Passwords do not match - please try again");
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        navigation.navigate("Start", { screen: "CreateProfile" });
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    } finally {
       setLoading(false);
     }
   }
@@ -63,51 +88,79 @@ export default function SignUp({ navigation }) {
         {/* Sign-in Form */}
         <View className="flex flex-col p-8 space-y-4 bg-white">
           <View className="w-full flex flex-col mb-2">
-            <Text className="text-4xl font-bold text-indigo-900">Sign Up For Roster</Text>
-            <Text className="text-lg text-gray-500">Your Recreational Sports Hub</Text>
+            <Text className="text-3xl font-bold text-[#363D4F]">Sign Up For Roster</Text>
+            <Text className="text-lg text-[#363D4F]">Your Recreational Sports Hub</Text>
           </View>
           <View style={{ flexDirection: "column", gap: 10 }}>
-            <InputField
-              style={{ marginBottom: 10 }}
-              showIcon={true}
-              iconColour="#363D4F"
-              placeholder="Enter your email"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              autoCapitalize={"none"}
-              returnKeyType="next"
-              onSubmitEditing={() => {
-                passwordRef.current.focus();
-              }}
-            />
-            <InputField
-              showIcon={true}
-              icon="lock"
-              iconColour="#363D4F"
-              placeholder="Password"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              autoCapitalize={"none"}
-              secureTextEntry={true}
-              ref={passwordRef}
-              returnKeyType="next"
-              onSubmitEditing={() => {
-                confirmationPasswordRef.current.focus();
-              }}
-            />
-            <InputField
-              showIcon={true}
-              icon="lock"
-              iconColour="#363D4F"
-              placeholder="Confirm Password"
-              className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              value={confirmationPassword}
-              onChangeText={(text) => setConfirmationPassword(text)}
-              autoCapitalize={"none"}
-              secureTextEntry={true}
-              ref={confirmationPasswordRef}
-            />
+            {/* Email Input */}
+            <View style={styles.input.inputContainer}>
+              <MaterialIcons
+                name="email" // Assuming the icon is always an email icon, change as needed
+                size={24}
+                color="#363D4F"
+                style={styles.input.icon}
+              />
+              <TextInput
+                ref={emailRef}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+                placeholderTextColor="#363D4F"
+                style={styles.input.input}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                autoCapitalize={"none"}
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  passwordRef.current.focus();
+                }}
+              />
+            </View>
+            {/* Password input */}
+            <View style={styles.input.inputContainer}>
+              <MaterialIcons
+                name="lock" // Assuming the icon is always an email icon, change as needed
+                size={24}
+                color={passwordFocused || password ? "#363D4F" : "lightgray"}
+                style={styles.input.icon}
+              />
+              <TextInput
+                style={styles.input.input}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
+                placeholder="Password"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                autoCapitalize={"none"}
+                secureTextEntry={true}
+                ref={passwordRef}
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  confirmationPasswordRef.current.focus();
+                }}
+              />
+            </View>
+            {/* Confirm Password Input */}
+            <View style={styles.input.inputContainer}>
+              <MaterialIcons
+                name="lock" // Assuming the icon is always an email icon, change as needed
+                size={24}
+                color={confirmPasswordFocused || confirmationPassword ? "black" : "lightgray"}
+                style={styles.input.icon}
+              />
+              <TextInput
+                style={styles.input.input}
+                onFocus={() => setConfirmPasswordFocused(true)}
+                onBlur={() => setConfirmPasswordFocused(false)}
+                placeholder="Confirm Password"
+                value={confirmationPassword}
+                onChangeText={(text) => setConfirmationPassword(text)}
+                autoCapitalize={"none"}
+                secureTextEntry={true}
+                ref={confirmationPasswordRef}
+              />
+            </View>
           </View>
           <TouchableOpacity
             disabled={loading}
