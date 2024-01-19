@@ -19,6 +19,7 @@ import SuccessModal from "../../components/forms/modal";
 import Checkmark from "../../components/icons/general/checkmark";
 import Cancel from "../../components/icons/general/cancel";
 import Avatar from "../../components/account/avatar";
+import Loading from "../../components/icons/general/loading";
 
 export default function CreateProfile(session) {
   const [loading, setLoading] = useState(false);
@@ -292,15 +293,19 @@ export default function CreateProfile(session) {
         </ScrollView>
         <TouchableOpacity
           disabled={loading || disableButton}
-          className={` w-full items-center justify-end p-3 rounded-lg mb-2 ${
+          className={` w-full items-center justify-center h-14 rounded-lg mb-2 ${
             disableButton
               ? "bg-offwhite border-2 border-[#cacaca]"
               : "bg-offwhite border-2 border-blue"
           }`}
           onPress={() => updateProfile({ username, firstName, lastName })}>
-          <Text className={`text-lg font-bold ${disableButton ? "text-[#cacaca]" : "text-gray"}`}>
-            Save Profile
-          </Text>
+          {loading ? (
+            <Loading dotColor="#363D4F" />
+          ) : (
+            <Text className={`text-lg font-bold ${disableButton ? "text-[#cacaca]" : "text-gray"}`}>
+              Save Profile
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

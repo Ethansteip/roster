@@ -3,7 +3,6 @@ import {
   Alert,
   ImageBackground,
   SafeAreaView,
-  TextInput,
   View,
   Text,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { supabase } from "../../lib/supbase/supabase";
+import { InputField } from "../../components/forms/Input";
 
 import GoogleIcon from "../../components/icons/general/google";
 import Apple from "../../components/icons/general/apple";
@@ -62,51 +62,62 @@ export default function SignUp({ navigation }) {
         </View>
         {/* Sign-in Form */}
         <View className="flex flex-col p-8 space-y-4 bg-white">
-          <View className="w-full flex flex-col">
+          <View className="w-full flex flex-col mb-2">
             <Text className="text-4xl font-bold text-indigo-900">Sign Up For Roster</Text>
             <Text className="text-lg text-gray-500">Your Recreational Sports Hub</Text>
           </View>
-          <TextInput
-            placeholder="Email Address"
-            keyboardType="email-address"
-            className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            autoCapitalize={"none"}
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              passwordRef.current.focus();
-            }}
-          />
-          <TextInput
-            placeholder="Password"
-            className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            autoCapitalize={"none"}
-            secureTextEntry={true}
-            ref={passwordRef}
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              confirmationPasswordRef.current.focus();
-            }}
-          />
-          <TextInput
-            placeholder="Confirm Password"
-            className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={confirmationPassword}
-            onChangeText={(text) => setConfirmationPassword(text)}
-            autoCapitalize={"none"}
-            secureTextEntry={true}
-            ref={confirmationPasswordRef}
-          />
+          <View style={{ flexDirection: "column", gap: 10 }}>
+            <InputField
+              style={{ marginBottom: 10 }}
+              showIcon={true}
+              iconColour="#363D4F"
+              placeholder="Enter your email"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              autoCapitalize={"none"}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                passwordRef.current.focus();
+              }}
+            />
+            <InputField
+              showIcon={true}
+              icon="lock"
+              iconColour="#363D4F"
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              autoCapitalize={"none"}
+              secureTextEntry={true}
+              ref={passwordRef}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                confirmationPasswordRef.current.focus();
+              }}
+            />
+            <InputField
+              showIcon={true}
+              icon="lock"
+              iconColour="#363D4F"
+              placeholder="Confirm Password"
+              className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              value={confirmationPassword}
+              onChangeText={(text) => setConfirmationPassword(text)}
+              autoCapitalize={"none"}
+              secureTextEntry={true}
+              ref={confirmationPasswordRef}
+            />
+          </View>
           <TouchableOpacity
-            className="flex items-center justify-center p-3 bg-gray rounded-lg"
             disabled={loading}
-            onPress={() => signUpWithEmail()}>
-            <Text className="text-offwhite text-lg font-bold">
-              {loading ? <Loading /> : "Sign Up"}
-            </Text>
+            onPress={() => signUpWithEmail()}
+            className="flex items-center justify-center h-14 bg-gray rounded-lg">
+            {loading ? (
+              <Loading dotColor="#FAFAFA" />
+            ) : (
+              <Text className="text-offwhite text-lg font-bold">Sign Up</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             className="flex items-center justify-center p-3"

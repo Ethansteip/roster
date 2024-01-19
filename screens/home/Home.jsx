@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Button } from "react-native";
 import Card from "../../components/home/WelcomeCard";
+import EmailInputField from "../../components/forms/Input";
 
 export default function Home({ navigation }) {
   return (
@@ -8,6 +9,7 @@ export default function Home({ navigation }) {
       <Text className="text-green-500 text-xl">Home Screen</Text>
       <Button title="Go to Schedule" onPress={() => navigation.navigate("Schedule")} />
       <Card />
+      <EmailInputField />
     </View>
   );
 }
