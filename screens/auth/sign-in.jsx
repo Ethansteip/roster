@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Alert,
   ImageBackground,
   TextInput,
   SafeAreaView,
-  KeyboardAvoidingView,
   Platform,
   View,
   Text,
   TouchableOpacity,
 } from "react-native";
 import { supabase } from "../../lib/supbase/supabase";
+import styles from "../../styles/forms";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import GoogleIcon from "../../components/icons/general/google";
 import Facebook from "../../components/icons/general/facebook";
@@ -20,7 +23,11 @@ import Loading from "../../components/icons/general/loading";
 export default function SignIn({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const passwordRef = useRef();
 
   async function signInWithEmail() {
     setLoading(true);
@@ -41,11 +48,10 @@ export default function SignIn({ navigation }) {
   return (
     <SafeAreaView className="flex-1 flex-col justify-end">
       {/* Sign-in Image */}
-      <KeyboardAvoidingView
-        keyboardVerticalOffset={20}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1">
-        <View className="flex h-1/3 items-center justify-center bg-gray3">
+      <KeyboardAwareScrollView
+        keyboardVerticalOffset={100}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <View className="flex h-1/2 items-center justify-center bg-gray3">
           <View className="flex h-full w-full justify-center items-center">
             <ImageBackground
               source={require("roster/assets/general/placeholder.png")}
@@ -60,38 +66,62 @@ export default function SignIn({ navigation }) {
             <Text className="text-4xl font-bold text-indigo-900">Sign In</Text>
             <Text className="text-lg text-gray-500">Your Recreational Sports Hub</Text>
           </View>
-          <TextInput
-            placeholder="Email Address"
-            keyboardType="email-address"
-            className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            autoCapitalize={"none"}
-          />
-          <TextInput
-            placeholder="Password"
-            className="bg-gray-50 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            autoCapitalize={"none"}
-            secureTextEntry={true}
-          />
+          <View style={styles.input.inputContainer}>
+            <MaterialIcons
+              name="email" // Assuming the icon is always an email icon, change as needed
+              size={24}
+              color="#363D4F"
+              style={styles.input.icon}
+            />
+            <TextInput
+              placeholderTextColor="#363D4F"
+              style={styles.input.input}
+              placeholder="Email"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              autoCapitalize={"none"}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                passwordRef.current.focus();
+              }}
+            />
+          </View>
+          <View style={styles.input.inputContainer}>
+            <Entypo
+              name={showPassword ? "lock-open" : "lock"}
+              size={24}
+              color={passwordFocused || password ? "#363D4F" : "lightgray"}
+              style={styles.input.icon}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+            <TextInput
+              style={styles.input.input}
+              onFocus={() => setPasswordFocused(true)}
+              onBlur={() => setPasswordFocused(false)}
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              autoCapitalize={"none"}
+              returnKeyType="done"
+              secureTextEntry={showPassword ? false : true}
+              ref={passwordRef}
+            />
+          </View>
           <TouchableOpacity
-            className="flex items-center justify-center p-3 bg-gray rounded-lg"
+            className="flex items-center justify-center h-14 bg-gray rounded-lg"
             disabled={!email || !password || loading}
             onPress={() => signInWithEmail()}>
             <Text className="text-offwhite text-lg font-bold">
-              {loading ? <Loading /> : "Sign In"}
+              {loading ? <Loading dotColor="#FAFAFA" /> : "Sign In"}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            className="flex items-center justify-center p-3"
-            onPress={() => navigation.navigate("SignUp")}>
-            <Text className="text-gray-500 tracking-wide">
-              Dont have an account?
+          <View className="flex flex-row items-center justify-center p-3">
+            <Text className="text-gray-500 tracking-wide">Dont have an account?</Text>
+            <TouchableOpacity className="" onPress={() => navigation.navigate("SignUp")}>
               <Text className="text-blue font-semibold tracking-wide"> Sign Up</Text>
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
           <View className="w-full border-b border-gray-300"></View>
           <View className="flex items-center justify-center w-full">
             <Text className="text-gray-500 tracking-wide">Or continue with</Text>
@@ -108,7 +138,8 @@ export default function SignIn({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 }

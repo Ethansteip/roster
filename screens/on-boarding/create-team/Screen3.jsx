@@ -26,10 +26,7 @@ const Screen3 = ({ navigation, route }) => {
     }
   };
   return (
-    <SafeAreaView className="flex-1 w-full flex-col bg-offwhite">
-      <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
-        <BackArrow />
-      </TouchableOpacity>
+    <SafeAreaView className="flex h-full w-full flex-col justify-between">
       <View className="flex h-1/2 flex-col justify-center items-center">
         {/* Celebreate icon */}
         <View className="bg-green h-[100px] w-[100px] rounded-full flex items-center justify-center mb-3">
@@ -43,14 +40,11 @@ const Screen3 = ({ navigation, route }) => {
           team code below to start inviting team mates to your roster!
         </Text>
         {/* Team Code */}
-        <View className="flex flex-col space-y-2 items-center w-full h-auto p-5 bg-offwhite rounded-xl">
+        <View className="flex flex-col space-y-2 items-center w-full h-auto p-5">
           <TeamCode teamName={team_code} />
-          {/* <Text className="text-xs text-center w-3/4">
-            Only share this code with people you want to join your team
-          </Text> */}
         </View>
       </View>
-      <View className="flex h-1/2 flex-col justify-end items-center mx-8 space-y-3 pb-16">
+      <View className="flex h-1/2 flex-col justify-end items-center mx-8 space-y-3 pb-5">
         <TouchableOpacity
           onPress={onShare}
           className="p-3 flex justify-center items-center border-2 border-blue indigo-900 border-black rounded-lg w-full">

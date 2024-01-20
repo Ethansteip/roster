@@ -11,7 +11,7 @@ export default function TeamCode({ teamName }) {
           <View
             key={index}
             className="flex items-center justify-center p-3 rounded-lg w-[45px] bg-green">
-            <Text className="font-bold text-2xl text-gray">{digit}</Text>
+            <Text className="font-bold text-2xl text-offwhite">{digit}</Text>
           </View>
         );
       })}

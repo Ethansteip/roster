@@ -7,13 +7,15 @@ module.exports = {
     "./icons/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    colors: {
-      blue: "#0071E3",
-      offwhite: "#FAFAFA",
-      gray: "#363D4F",
-      gray2: "#212121",
-      gray3: "#060B13",
-      green: "#4bad9c",
+    extend: {
+      colors: {
+        "roster-blue": "#0071E3",
+        "roster-offwhite": "#FAFAFA",
+        "roster-gray": "#363D4F",
+        "roster-gray2": "#212121",
+        "rotser-gray3": "#060B13",
+        "roster-green": "#4bad9c",
+      },
     },
     // ...
   },

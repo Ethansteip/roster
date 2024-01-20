@@ -18,14 +18,16 @@ import Facebook from "../../components/icons/general/facebook";
 import Loading from "../../components/icons/general/loading";
 import styles from "../../styles/forms";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
 export default function SignUp({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmationPassword, setConfirmationPassword] = useState("");
-  const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmationPassword, setShowConfirmationPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const emailRef = useRef();
@@ -102,8 +104,6 @@ export default function SignUp({ navigation }) {
               />
               <TextInput
                 ref={emailRef}
-                onFocus={() => setEmailFocused(true)}
-                onBlur={() => setEmailFocused(false)}
                 placeholderTextColor="#363D4F"
                 style={styles.input.input}
                 placeholder="Enter your email"
@@ -119,11 +119,12 @@ export default function SignUp({ navigation }) {
             </View>
             {/* Password input */}
             <View style={styles.input.inputContainer}>
-              <MaterialIcons
-                name="lock" // Assuming the icon is always an email icon, change as needed
+              <Entypo
+                name={showPassword ? "lock-open" : "lock"}
                 size={24}
                 color={passwordFocused || password ? "#363D4F" : "lightgray"}
                 style={styles.input.icon}
+                onPress={() => setShowPassword(!showPassword)}
               />
               <TextInput
                 style={styles.input.input}
@@ -133,7 +134,7 @@ export default function SignUp({ navigation }) {
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 autoCapitalize={"none"}
-                secureTextEntry={true}
+                secureTextEntry={showPassword ? false : true}
                 ref={passwordRef}
                 returnKeyType="next"
                 onSubmitEditing={() => {
@@ -143,11 +144,12 @@ export default function SignUp({ navigation }) {
             </View>
             {/* Confirm Password Input */}
             <View style={styles.input.inputContainer}>
-              <MaterialIcons
-                name="lock" // Assuming the icon is always an email icon, change as needed
+              <Entypo
+                name={showConfirmationPassword ? "lock-open" : "lock"}
                 size={24}
-                color={confirmPasswordFocused || confirmationPassword ? "black" : "lightgray"}
+                color={confirmPasswordFocused || password ? "#363D4F" : "lightgray"}
                 style={styles.input.icon}
+                onPress={() => setShowConfirmationPassword(!showConfirmationPassword)}
               />
               <TextInput
                 style={styles.input.input}
@@ -157,7 +159,8 @@ export default function SignUp({ navigation }) {
                 value={confirmationPassword}
                 onChangeText={(text) => setConfirmationPassword(text)}
                 autoCapitalize={"none"}
-                secureTextEntry={true}
+                secureTextEntry={showConfirmationPassword ? false : true}
+                returnKeyType="done"
                 ref={confirmationPasswordRef}
               />
             </View>
@@ -172,14 +175,12 @@ export default function SignUp({ navigation }) {
               <Text className="text-offwhite text-lg font-bold">Sign Up</Text>
             )}
           </TouchableOpacity>
-          <TouchableOpacity
-            className="flex items-center justify-center p-3"
-            onPress={() => navigation.navigate("SignIn")}>
-            <Text className="text-gray-500 tracking-wide">
-              Already have an account?{" "}
-              <Text className="text-blue font-semibold tracking-wide">Sign In</Text>
-            </Text>
-          </TouchableOpacity>
+          <View className="flex flex-row items-center justify-center p-3">
+            <Text className="text-gray-500 tracking-wide">Already have an account?</Text>
+            <TouchableOpacity className="" onPress={() => navigation.navigate("SignIn")}>
+              <Text className="text-blue font-semibold tracking-wide"> Sign In</Text>
+            </TouchableOpacity>
+          </View>
           <View className="w-full border-b border-gray-300"></View>
           <View className="flex items-center justify-center w-full">
             <Text className="text-gray-500 tracking-wide">Or continue with</Text>

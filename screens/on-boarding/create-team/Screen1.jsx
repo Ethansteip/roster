@@ -7,14 +7,16 @@ import { usStates } from "../../../lib/constants/States";
 import { provinces } from "../../../lib/constants/Provinces";
 
 import BackArrow from "../../../components/icons/general/BackArrow";
+import styles from "../../../styles/forms";
 
 const Screen1 = ({ navigation }) => {
   const [teamName, setTeamName] = useState("");
+  const [teamNameFocused, setTeamNameFocused] = useState(false);
   const [openCountry, setOpenCountry] = useState(false);
   const [country, setCountry] = useState(null);
   const [countries, setCountries] = useState([
-    { label: "United States", value: "US" },
-    { label: "Canada", value: "CAN" },
+    { label: "🇺🇸 United States", value: "US" },
+    { label: "🇨🇦 Canada", value: "CAN" },
   ]);
 
   const [openState, setOpenState] = useState(false);
@@ -22,6 +24,7 @@ const Screen1 = ({ navigation }) => {
   const [states, setStates] = useState([]);
 
   const [city, setCity] = useState("");
+  const [cityFocused, setCityFocused] = useState(false);
 
   const isFilledOut = !teamName || !country || !state || !city ? false : true;
 
@@ -49,13 +52,22 @@ const Screen1 = ({ navigation }) => {
                 <Text className="text-gray-100 text-lg">
                   Team Name<Text className="text-green"> *</Text>
                 </Text>
-                <TextInput
-                  placeholder="Team Name"
-                  className="bg-gray-500 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={teamName}
-                  onChangeText={(text) => setTeamName(text)}
-                  autoCapitalize={"words"}
-                />
+                <View
+                  style={[
+                    styles.input.inputContainer,
+                    teamNameFocused ? { borderColor: "black" } : { borderColor: "lightgray" },
+                  ]}>
+                  <TextInput
+                    style={styles.input.input}
+                    onFocus={() => setTeamNameFocused(true)}
+                    onBlur={() => setTeamNameFocused(false)}
+                    placeholder="Team Name"
+                    value={teamName}
+                    onChangeText={(text) => setTeamName(text)}
+                    autoCapitalize={"words"}
+                    returnKeyType="done"
+                  />
+                </View>
               </View>
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">
@@ -63,11 +75,17 @@ const Screen1 = ({ navigation }) => {
                 </Text>
                 <DropDownPicker
                   placeholder="Select a country"
-                  style={{
-                    backgroundColor: "transparent",
-                  }}
+                  style={
+                    (styles.input.inputContainer,
+                    { backgroundColor: "transparent", padding: 25, paddingVertical: 14 },
+                    country ? { borderColor: "black" } : { borderColor: "lightgray" })
+                  }
                   placeholderStyle={{
                     color: "#adadad",
+                    backgroundColor: "transparent",
+                    paddingHorizontal: 10,
+                    paddingVertical: 14,
+                    fontSize: 16,
                   }}
                   open={openCountry}
                   value={country}
@@ -84,11 +102,17 @@ const Screen1 = ({ navigation }) => {
                 </Text>
                 <DropDownPicker
                   placeholder="Select a state / province"
-                  style={{
-                    backgroundColor: "transparent",
-                  }}
+                  style={
+                    (styles.input.inputContainer,
+                    { backgroundColor: "transparent" },
+                    state ? { borderColor: "black" } : { borderColor: "lightgray" })
+                  }
                   placeholderStyle={{
                     color: "#adadad",
+                    backgroundColor: "transparent",
+                    paddingHorizontal: 10,
+                    paddingVertical: 14,
+                    fontSize: 16,
                   }}
                   open={openState}
                   value={state}
@@ -102,20 +126,29 @@ const Screen1 = ({ navigation }) => {
                 <Text className="text-gray-100 text-lg">
                   City<Text className="text-green"> *</Text>
                 </Text>
-                <TextInput
-                  placeholder="City"
-                  className="bg-gray-500 h-12 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-blue focus:border-opacity-50 focus:border-2 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={city}
-                  onChangeText={(text) => setCity(text)}
-                  autoCapitalize={"words"}
-                />
+                <View
+                  style={[
+                    styles.input.inputContainer,
+                    cityFocused || city ? { borderColor: "black" } : { borderColor: "lightgray" },
+                  ]}>
+                  <TextInput
+                    style={styles.input.input}
+                    onFocus={() => setCityFocused(true)}
+                    onBlur={() => setCityFocused(false)}
+                    placeholder="City"
+                    value={city}
+                    onChangeText={(text) => setCity(text)}
+                    autoCapitalize={"words"}
+                    returnKeyType="done"
+                  />
+                </View>
               </View>
             </View>
           </KeyboardAwareScrollView>
         </ScrollView>
         <TouchableOpacity
           disabled={!isFilledOut}
-          className={` w-full items-center justify-end p-3 rounded-lg ${
+          className={`flex items-center justify-center h-14 rounded-lg ${
             isFilledOut ? "bg-gray" : "bg-[#d1d5db]"
           }`}
           onPress={() => navigation.navigate("Screen2", { teamName, country, state, city })}>

@@ -1,24 +1,18 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Alert,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { View, Alert, Text, SafeAreaView, TouchableOpacity, FlatList } from "react-native";
 import { supabase } from "../../../lib/supbase/supabase";
 import DropDownPicker from "react-native-dropdown-picker";
 DropDownPicker.setListMode("MODAL");
 
 import BackArrow from "../../../components/icons/general/BackArrow";
 import SelectSport from "../../../components/on-boarding/select-sport";
+import Loading from "../../../components/icons/general/loading";
 
 const Screen2 = ({ route, navigation }) => {
   const { teamName, country, state, city } = route.params;
 
   const [availableSports, setAvailableSports] = useState([]);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeSelection, setActiveSelection] = useState();
 
@@ -50,6 +44,7 @@ const Screen2 = ({ route, navigation }) => {
   };
 
   const handleSubmit = async () => {
+    setLoadingSubmit(true);
     const sportName = await fetchSelectedSportName();
     const {
       data: { user },
@@ -69,9 +64,12 @@ const Screen2 = ({ route, navigation }) => {
       .select();
 
     if (error) {
-      Alert.alert(error.message);
+      setLoadingSubmit(false);
+      return Alert.alert(error.message);
     } else {
+      setLoadingSubmit(false);
       navigation.navigate("Screen3", data);
+      return;
     }
   };
 
@@ -112,16 +110,26 @@ const Screen2 = ({ route, navigation }) => {
         <View className="flex flex-col">
           <Text className="text-3xl font-bold text-gray3">Choose your sport</Text>
         </View>
-        {loading ? <ActivityIndicator size="large" color="#6366f1" /> : <SportSelectionList />}
+        {loading ? (
+          <View className="flex flex-col items-center justify-center h-3/4 w-full">
+            <Loading dotColor="#363D4F" />
+          </View>
+        ) : (
+          <SportSelectionList />
+        )}
       </View>
       <View className="flex flex-col justify-end items-center mx-6 pb-5">
         <TouchableOpacity
           disabled={!activeSelection}
           onPress={handleSubmit}
-          className={`flex w-full items-center justify-center p-3 rounded-lg ${
+          className={`w-full flex items-center justify-center h-14 rounded-lg ${
             activeSelection ? "bg-gray" : "bg-[#d1d5db]"
           }`}>
-          <Text className="text-lg font-bold text-offwhite">Next</Text>
+          {loadingSubmit ? (
+            <Loading dotColor="#FAFAFA" />
+          ) : (
+            <Text className="text-lg font-bold text-offwhite">Next</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -15,7 +15,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import SuccessModal from "../../components/forms/modal";
 import Checkmark from "../../components/icons/general/checkmark";
 import Cancel from "../../components/icons/general/cancel";
 import Avatar from "../../components/account/avatar";
@@ -69,14 +68,6 @@ export default function CreateProfile(session) {
     }
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("transitionEnd", (e) => {
-      usernameInput.current?.focus();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
   async function updateProfile({ username, firstName, lastName, avatar_url }) {
     try {
       setLoading(true);
@@ -122,14 +113,6 @@ export default function CreateProfile(session) {
         }, 1500);
       }
       if (data) {
-        // setShowUsernameMessage(false);
-        // setmodalText("Successfully saved profile.");
-        // setModalSuccess(true);
-        // setModalVisible(true);
-        // setTimeout(() => {
-        //   setModalVisible(false);
-        //   navigation.navigate("GetStarted");
-        // }, 1500);
         navigation.navigate("GetStarted");
       }
     } catch (error) {
@@ -216,8 +199,6 @@ export default function CreateProfile(session) {
 
   return (
     <SafeAreaView className="flex-1 h-[100%] w-full flex-col bg-offwhite">
-      {/* Success modal */}
-      <SuccessModal text={modalText} success={modalSuccess} visible={modalVisible} />
       <View className="w-full flex-1 flex-col justify-between px-5">
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -225,7 +206,9 @@ export default function CreateProfile(session) {
             flexGrow: 1,
             justifyContent: "space-between",
           }}>
-          <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+          <KeyboardAwareScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardVerticalOffset={300}>
             <View className="flex flex-col mt-5">
               <Text className="text-3xl font-bold text-gray3">Create your profile</Text>
             </View>
@@ -239,7 +222,7 @@ export default function CreateProfile(session) {
               </View>
               {/*  */}
               <View className="flex flex-col space-y-2">
-                <Text className="text-gray-100 text-lg">Email</Text>
+                <Text className="text-[#cfcfcf] text-lg">Email</Text>
                 {/* Email Input */}
                 <View style={styles.input.inputContainer}>
                   <TextInput
@@ -255,12 +238,10 @@ export default function CreateProfile(session) {
                   Username<Text className="text-green"> *</Text>
                 </Text>
                 {/* Email Input */}
-                <View
-                  style={[
-                    styles.input.inputContainer,
-                    usernameFocused ? { borderColor: "#4bad9c" } : { borderColor: "lightgray" },
-                  ]}>
+                <View style={[styles.input.inputContainer, { borderColor: "black" }]}>
                   <TextInput
+                    autoCorrect={false}
+                    placeholderTextColor="black"
                     onFocus={() => setUsernameFocused(true)}
                     onBlur={() => setUsernameFocused(false)}
                     placeholder="Username"
@@ -292,9 +273,12 @@ export default function CreateProfile(session) {
                 <View
                   style={[
                     styles.input.inputContainer,
-                    firstnameFocused ? { borderColor: "#4bad9c" } : { borderColor: "lightgray" },
+                    firstnameFocused || firstName
+                      ? { borderColor: "black" }
+                      : { borderColor: "lightgray" },
                   ]}>
                   <TextInput
+                    autoCorrect={false}
                     onFocus={() => setFirstnameFocused(true)}
                     onBlur={() => setFirstnameFocused(false)}
                     placeholder="First Name"
@@ -317,9 +301,12 @@ export default function CreateProfile(session) {
                 <View
                   style={[
                     styles.input.inputContainer,
-                    lastnameFocused ? { borderColor: "#4bad9c" } : { borderColor: "lightgray" },
+                    lastnameFocused || lastName
+                      ? { borderColor: "black" }
+                      : { borderColor: "lightgray" },
                   ]}>
                   <TextInput
+                    autoCorrect={false}
                     onFocus={() => setLastnameFocused(true)}
                     onBlur={() => setLastnameFocused(false)}
                     placeholder="First Name"
@@ -327,7 +314,7 @@ export default function CreateProfile(session) {
                     value={lastName}
                     onChangeText={(value) => setLastname(value)}
                     ref={lastnameInput}
-                    returnKeyType="next"
+                    returnKeyType="done"
                   />
                 </View>
               </View>
@@ -336,16 +323,15 @@ export default function CreateProfile(session) {
         </ScrollView>
         <TouchableOpacity
           disabled={loading || disableButton}
-          className={` w-full items-center justify-center h-14 rounded-lg mb-2 ${
-            disableButton
-              ? "bg-offwhite border-2 border-[#cacaca]"
-              : "bg-offwhite border-2 border-blue"
+          className={`flex items-center justify-center h-14 rounded-lg mb-2 ${
+            disableButton ? "bg-offwhite border-2 border-[#cacaca]" : "bg-gray"
           }`}
           onPress={() => updateProfile({ username, firstName, lastName })}>
           {loading ? (
-            <Loading dotColor="#363D4F" />
+            <Loading dotColor="#FAFAFA" />
           ) : (
-            <Text className={`text-lg font-bold ${disableButton ? "text-[#cacaca]" : "text-gray"}`}>
+            <Text
+              className={`text-lg font-bold ${disableButton ? "text-[#cacaca]" : "text-offwhite"}`}>
               Save Profile
             </Text>
           )}
