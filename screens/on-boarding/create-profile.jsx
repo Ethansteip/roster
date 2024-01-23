@@ -32,7 +32,7 @@ export default function CreateProfile(session) {
   const [avatarUrl, setAvatarUrl] = useState(
     `https://api.dicebear.com/7.x/thumbs/svg?seed=${Math.floor(100000 + Math.random() * 900000)}`
   );
-  const [avatarImage, setAvatarImage] = useState(null);
+  const [avatarPayload, setAvatarPayload] = useState(null);
   //const [Image, setImageData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
@@ -68,49 +68,35 @@ export default function CreateProfile(session) {
     }
   }, []);
 
-  async function updateProfile({ username, firstName, lastName, avatar_url }) {
+  async function updateProfile({ username, firstName, lastName }) {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      if (usernameTaken) {
-        setmodalText(`The username ${username} is unavailable. Please use another name.`);
-        setModalSuccess(false);
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-        }, 2000);
-        return;
-      }
+      // upload avatar and set in variable
+      const uploadAvatarResult = await uploadAvatar();
 
-      // upload avatar
-      await uploadAvatar();
-      // Retrieve uploaded avatar url
-      const { data: avatar } = await supabase.storage
-        .from("avatares")
-        .getPublicUrl(`${session?.user.email}.png`);
-
-      setAvatarUrl(avatar);
+      const { data: publicAvatarUrl } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(uploadAvatarResult);
 
       const updates = {
         id: session?.user.id,
         username,
         first_name: firstName,
         last_name: lastName,
-        avatar_url,
+        avatar_url: publicAvatarUrl.publicUrl,
         updated_at: new Date(),
       };
 
-      await uploadAvatar();
+      console.log("UPDATES BEFORE UPSERT: ", updates);
+
       let { data, error } = await supabase.from("profiles").upsert(updates).select();
 
+      console.log("DATA AFTER UPDATE: ", data);
+
       if (error) {
-        setmodalText(`Username must be greater than or equal to 3 characters.`);
-        setModalSuccess(false);
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-        }, 1500);
+        console.log("ERROR ON UPSERT: ", error);
       }
       if (data) {
         navigation.navigate("GetStarted");
@@ -174,26 +160,32 @@ export default function CreateProfile(session) {
 
     if (!result.canceled) {
       setAvatarUrl(result.assets[0].uri);
-      setAvatarImage(result.assets[0].base64);
+      setAvatarPayload(result.assets[0].base64);
+      // const shortBase64 = result.assets[0].base64.slice(0, 100);
+      // console.log("AVATAR URL: ", avatarUrl);
+      // console.log("AVATAR PAYLOAD: ", shortBase64);
       return result;
     }
   }
 
   async function uploadAvatar() {
     try {
-      const { error } = await supabase.storage
+      const { data, error } = await supabase.storage
         .from("avatars")
-        .upload(`${session?.user.email}.png`, decode(avatarImage), {
+        .upload(`${session?.user.email}.png`, decode(avatarPayload), {
           contentType: "image/png",
         });
 
       if (error) {
-        throw error;
+        console.log(error.message);
+        return Alert.alert(error.message);
       }
+
+      console.log("UPLOAD IMAGE DATA: ", data);
+      return data.path;
     } catch (error) {
-      console.log("Error: ", error);
-    } finally {
-      console.log("FINISHED UPLOADING IMAGE!");
+      console.log("Error: ", error.message);
+      throw error;
     }
   }
 
@@ -234,14 +226,14 @@ export default function CreateProfile(session) {
                 </View>
               </View>
               <View className="flex flex-col space-y-2">
-                <Text className="text-gray-100 text-lg">
+                <Text className="text-roster-gray text-lg">
                   Username<Text className="text-green"> *</Text>
                 </Text>
                 {/* Email Input */}
                 <View style={[styles.input.inputContainer, { borderColor: "black" }]}>
                   <TextInput
                     autoCorrect={false}
-                    placeholderTextColor="black"
+                    placeholderTextColor="lightgray"
                     onFocus={() => setUsernameFocused(true)}
                     onBlur={() => setUsernameFocused(false)}
                     placeholder="Username"
@@ -267,7 +259,7 @@ export default function CreateProfile(session) {
                 )}
               </View>
               <View className="flex flex-col space-y-2">
-                <Text className="text-gray-100 text-lg">
+                <Text className="text-roster-gray text-lg">
                   First Name<Text className="text-green"> *</Text>
                 </Text>
                 <View
@@ -295,7 +287,7 @@ export default function CreateProfile(session) {
               </View>
               {/* Last Name Input */}
               <View className="flex flex-col space-y-2">
-                <Text className="text-gray-100 text-lg">
+                <Text className="text-roster-gray text-lg">
                   Last Name<Text className="text-green"> *</Text>
                 </Text>
                 <View
@@ -324,7 +316,7 @@ export default function CreateProfile(session) {
         <TouchableOpacity
           disabled={loading || disableButton}
           className={`flex items-center justify-center h-14 rounded-lg mb-2 ${
-            disableButton ? "bg-offwhite border-2 border-[#cacaca]" : "bg-gray"
+            disableButton ? "bg-roster-offwhite border-2 border-[#cacaca]" : "bg-roster-gray"
           }`}
           onPress={() => updateProfile({ username, firstName, lastName })}>
           {loading ? (

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,21 +10,42 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
+
 import { supabase } from "../../../lib/supbase/supabase";
 import BackArrow from "../../../components/icons/general/BackArrow";
+import Loading from "../../../components/icons/general/loading";
 
 const Screen1 = ({ navigation }) => {
   const fieldsRef = useRef([]);
   const [state, setState] = useState({ code1: "", code2: "", code3: "", code4: "" });
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener("transitionEnd", (e) => {
-  //     first.current?.focus();
+  const [focusedInput, setFocusedInput] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("transitionEnd", () => {
+      fieldsRef.current[0].focus();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  // const pasteCode = async () => {
+  //   const text = await Clipboard.getString();
+
+  //   console.log("CLIPBOARD: ", text);
+
+  //   if (text.length !== 6) {
+  //     return Alert.alert(
+  //       "The code you are try to paste is not 6 digits long. Make sure you've copied a 6 digit code."
+  //     );
+  //   }
+
+  //   Object.keys(state).forEach((key, index) => {
+  //     state[key] = text[index];
   //   });
+  // };
 
-  //   return unsubscribe;
-  // }, [navigation]);
-
-  const verifyTeamExists = async () => {
+  const verifyTeamExists = async (teamCodeJoined) => {
     const { data, error } = await supabase.from("teams").select().eq("team_code", teamCodeJoined);
 
     if (error) {
@@ -38,6 +59,7 @@ const Screen1 = ({ navigation }) => {
         return team;
       } else {
         // No matching entry found
+        setLoading(false);
         Alert.alert(
           "No team found with the specified team code. Please double check your team code and try again."
         );
@@ -46,7 +68,7 @@ const Screen1 = ({ navigation }) => {
     }
   };
 
-  const userAlreadyBelongsToTeam = async (userId) => {
+  const userAlreadyBelongsToTeam = async (userId, teamCodeJoined) => {
     const { data, error } = await supabase
       .from("rosters")
       .select()
@@ -54,44 +76,58 @@ const Screen1 = ({ navigation }) => {
       .eq("player_id", userId);
 
     if (error) {
-      Alert.alert("Error: ", error.message);
+      setLoading(false);
+      return Alert.alert("Error: ", error.message);
     } else if (data.length > 0) {
       const team = data[0];
+      setLoading(false);
       Alert.alert(
         `You have already joined ${team.team_name}. Feel free to skip this section or join another team.`
       );
       return true;
     } else {
+      setLoading(false);
       return false;
     }
   };
 
   const handleSubmit = async () => {
-    // get user
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    setLoading(true);
 
-    const teamVerified = await verifyTeamExists();
-    const alreadyJoinedTeam = await userAlreadyBelongsToTeam(user?.id);
+    const teamCodeJoined = Object.values(state).join("");
 
-    if (teamVerified && !alreadyJoinedTeam) {
-      // insert user into rosters table
-      const { data, error } = await supabase
-        .from("rosters")
-        .insert({
-          player_id: user?.id,
-          team_id: teamVerified.id,
-          team_name: teamVerified.name,
-          team_secret_code: teamVerified.team_code,
-        })
-        .select();
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-      if (error) {
-        Alert.alert(error.message);
-      } else {
-        navigation.navigate("Screen2", data);
+      const teamVerified = await verifyTeamExists(teamCodeJoined);
+      const alreadyJoinedTeam = await userAlreadyBelongsToTeam(user?.id, teamCodeJoined);
+
+      if (teamVerified && !alreadyJoinedTeam) {
+        // insert user into rosters table
+        const { data, error } = await supabase
+          .from("rosters")
+          .insert({
+            player_id: user?.id,
+            team_id: teamVerified.id,
+            team_name: teamVerified.name,
+            team_secret_code: teamVerified.team_code,
+          })
+          .select();
+
+        if (error) {
+          setLoading(false);
+          Alert.alert(error.message);
+          throw error;
+        } else {
+          setLoading(false);
+          navigation.navigate("Screen2", data);
+          return;
+        }
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -118,7 +154,7 @@ const Screen1 = ({ navigation }) => {
     // neww
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView className="flex-1 w-full flex-col bg-offwhite">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="w-10">
+        <TouchableOpacity onPress={() => navigation.goBack()} className="w-10 ml-5 mt-3">
           <BackArrow />
         </TouchableOpacity>
         <View className="flex h-1/2 flex-col justify-center items-center">
@@ -133,13 +169,15 @@ const Screen1 = ({ navigation }) => {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <TextInput
                 key={i}
-                style={styles.inputBox}
+                style={[styles.inputBox, focusedInput === i && styles.focusedInput]}
                 value={state[`code${i}`]}
                 returnKeyType={i === 6 ? "done" : "next"}
                 onChangeText={(text) => handleChange(text, `code${i}`)}
                 onKeyPress={({ nativeEvent }) => inputFocus(i - 1, nativeEvent.key)}
                 onSubmitEditing={({ nativeEvent }) => inputFocus(i - 1, nativeEvent.key)}
                 ref={(el) => (fieldsRef.current[i - 1] = el)}
+                onFocus={() => setFocusedInput(i)}
+                onBlur={() => setFocusedInput(0)}
               />
             ))}
           </View>
@@ -149,11 +187,18 @@ const Screen1 = ({ navigation }) => {
             <Text className="text-green">* </Text>If you have not already been given a code, skip
             this section for now and reach out to your team captain.
           </Text>
-          <TouchableOpacity disabled={false} onPress={handleSubmit}>
-            <Text className="text-lg font-bold text-offwhite">Join Team</Text>
+          <TouchableOpacity
+            disabled={false}
+            onPress={handleSubmit}
+            className="flex w-full items-center justify-center h-14 bg-roster-gray rounded-lg">
+            {loading ? (
+              <Loading dotColor="#FAFAFA" />
+            ) : (
+              <Text className="text-lg font-bold text-offwhite">Join Team</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity className="">
-            <Text className="text-lg text-gray">Skip</Text>
+            <Text className="text-lg text-roster-gray">Skip</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -175,6 +220,9 @@ const styles = StyleSheet.create({
     borderColor: "#666",
     textAlign: "center",
     fontSize: 20,
+  },
+  focusedInput: {
+    borderColor: "#4bad9c", // Change this color as needed
   },
 });
 
