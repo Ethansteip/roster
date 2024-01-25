@@ -51,7 +51,7 @@ export default function SignIn({ navigation }) {
       <KeyboardAwareScrollView
         keyboardVerticalOffset={100}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <View className="flex h-1/2 items-center justify-center bg-gray3">
+        <View className="flex h-1/2 items-center justify-center bg-roster-gray">
           <View className="flex h-full w-full justify-center items-center">
             <ImageBackground
               source={require("roster/assets/general/placeholder.png")}
@@ -63,7 +63,7 @@ export default function SignIn({ navigation }) {
         {/* Sign-in Form */}
         <View className="flex-1 flex-col p-8 space-y-4 bg-white z-5">
           <View className="w-full flex-col">
-            <Text className="text-4xl font-bold text-indigo-900">Sign In</Text>
+            <Text className="text-4xl font-bold text-roster-gray">Sign In</Text>
             <Text className="text-lg text-gray-500">Your Recreational Sports Hub</Text>
           </View>
           <View style={styles.input.inputContainer}>
@@ -109,17 +109,17 @@ export default function SignIn({ navigation }) {
             />
           </View>
           <TouchableOpacity
-            className="flex items-center justify-center h-14 bg-gray rounded-lg"
+            className="flex items-center justify-center h-14 bg-roster-gray rounded-lg"
             disabled={!email || !password || loading}
             onPress={() => signInWithEmail()}>
-            <Text className="text-offwhite text-lg font-bold">
+            <Text className="text-roster-offwhite text-lg font-bold">
               {loading ? <Loading dotColor="#FAFAFA" /> : "Sign In"}
             </Text>
           </TouchableOpacity>
           <View className="flex flex-row items-center justify-center p-3">
             <Text className="text-gray-500 tracking-wide">Dont have an account?</Text>
             <TouchableOpacity className="" onPress={() => navigation.navigate("SignUp")}>
-              <Text className="text-blue font-semibold tracking-wide"> Sign Up</Text>
+              <Text className="text-roster-blue font-semibold tracking-wide"> Sign Up</Text>
             </TouchableOpacity>
           </View>
           <View className="w-full border-b border-gray-300"></View>
@@ -127,13 +127,13 @@ export default function SignIn({ navigation }) {
             <Text className="text-gray-500 tracking-wide">Or continue with</Text>
           </View>
           <View className="flex flex-row w-auto items-center justify-center space-x-3">
-            <TouchableOpacity className="flex items-center justify-center border-2 border-green p-3 rounded-full">
+            <TouchableOpacity className="flex items-center justify-center border-2 border-roster-green p-3 rounded-full">
               <GoogleIcon />
             </TouchableOpacity>
-            <TouchableOpacity className="flex items-center justify-center border-2 border-green p-2 rounded-full">
+            <TouchableOpacity className="flex items-center justify-center border-2 border-roster-green p-2 rounded-full">
               <Apple />
             </TouchableOpacity>
-            <TouchableOpacity className="flex items-center justify-center border-2 border-green p-3 rounded-full">
+            <TouchableOpacity className="flex items-center justify-center border-2 border-roster-green p-3 rounded-full">
               <Facebook />
             </TouchableOpacity>
           </View>

@@ -32,6 +32,7 @@ export default function CreateProfile(session) {
   const [avatarUrl, setAvatarUrl] = useState(
     `https://api.dicebear.com/7.x/thumbs/svg?seed=${Math.floor(100000 + Math.random() * 900000)}`
   );
+  const [imagePicked, setImagePicked] = useState(false);
   const [avatarPayload, setAvatarPayload] = useState(null);
   //const [Image, setImageData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -68,20 +69,40 @@ export default function CreateProfile(session) {
     }
   }, []);
 
+  async function fetchImage(url) {
+    try {
+      const response = await fetch(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      throw error;
+    }
+  }
+
   async function updateProfile({ username, firstName, lastName }) {
     try {
       setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
 
-      // upload avatar and set in variable
+      if (!session?.user) {
+        throw new Error("No user on the session!");
+      }
+
       const uploadAvatarResult = await uploadAvatar();
 
-      const { data: publicAvatarUrl } = supabase.storage
+      if (!uploadAvatarResult) {
+        throw new Error("Avatar upload failed!");
+      }
+
+      const { data: publicAvatarUrl } = await supabase.storage
         .from("avatars")
         .getPublicUrl(uploadAvatarResult);
 
+      if (!publicAvatarUrl) {
+        throw new Error("Failed to get public avatar URL!");
+      }
+
       const updates = {
-        id: session?.user.id,
+        id: session.user.id,
         username,
         first_name: firstName,
         last_name: lastName,
@@ -89,22 +110,19 @@ export default function CreateProfile(session) {
         updated_at: new Date(),
       };
 
-      console.log("UPDATES BEFORE UPSERT: ", updates);
-
       let { data, error } = await supabase.from("profiles").upsert(updates).select();
 
-      console.log("DATA AFTER UPDATE: ", data);
-
       if (error) {
-        console.log("ERROR ON UPSERT: ", error);
+        console.error("Error on upsert:", error);
+        throw new Error("Profile update failed!");
       }
+
       if (data) {
         navigation.navigate("GetStarted");
       }
     } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
+      console.error("Update profile error:", error);
+      Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
     }
@@ -159,6 +177,7 @@ export default function CreateProfile(session) {
     });
 
     if (!result.canceled) {
+      setImagePicked(true);
       setAvatarUrl(result.assets[0].uri);
       setAvatarPayload(result.assets[0].base64);
       // const shortBase64 = result.assets[0].base64.slice(0, 100);
@@ -172,9 +191,13 @@ export default function CreateProfile(session) {
     try {
       const { data, error } = await supabase.storage
         .from("avatars")
-        .upload(`${session?.user.email}.png`, decode(avatarPayload), {
-          contentType: "image/png",
-        });
+        .upload(
+          `${session?.user.email}.png`,
+          imagePicked ? decode(avatarPayload) : await fetchImage(avatarUrl),
+          {
+            contentType: "image/png",
+          }
+        );
 
       if (error) {
         console.log(error.message);
@@ -190,7 +213,7 @@ export default function CreateProfile(session) {
   }
 
   return (
-    <SafeAreaView className="flex-1 h-[100%] w-full flex-col bg-offwhite">
+    <SafeAreaView className="flex-1 h-[100%] w-full flex-col bg-roster-offwhite">
       <View className="w-full flex-1 flex-col justify-between px-5">
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -323,7 +346,9 @@ export default function CreateProfile(session) {
             <Loading dotColor="#FAFAFA" />
           ) : (
             <Text
-              className={`text-lg font-bold ${disableButton ? "text-[#cacaca]" : "text-offwhite"}`}>
+              className={`text-lg font-bold ${
+                disableButton ? "text-[#cacaca]" : "text-roster-offwhite"
+              }`}>
               Save Profile
             </Text>
           )}

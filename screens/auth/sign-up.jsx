@@ -72,14 +72,14 @@ export default function SignUp({ navigation }) {
   }
 
   return (
-    <SafeAreaView className="flex-1 flex-col justify-end">
+    <SafeAreaView className="flex-1 flex-col justify-end bg-roster-offwhite">
       {/* Sign-in Image */}
       <KeyboardAvoidingView
         keyboardVerticalOffset={20}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1">
-        <View className="flex-1 bg-white items-center justify-center bg-gray3">
-          <View className="flex h-full w-full justify-center items-center">
+        <View className="flex-1 items-center justify-center bg-roster-gray">
+          <View className="flex-1 h-1/2 w-full justify-center items-center">
             <ImageBackground
               source={require("roster/assets/general/placeholder.png")}
               resizeMode="contain"
@@ -88,7 +88,7 @@ export default function SignUp({ navigation }) {
           </View>
         </View>
         {/* Sign-in Form */}
-        <View className="flex flex-col p-8 space-y-4 bg-white">
+        <View className="flex flex-col p-8 space-y-4 bg-roster-offwhite">
           <View className="w-full flex flex-col mb-2">
             <Text className="text-3xl font-bold text-[#363D4F]">Sign Up For Roster</Text>
             <Text className="text-lg text-[#363D4F]">Your Recreational Sports Hub</Text>
@@ -168,17 +168,17 @@ export default function SignUp({ navigation }) {
           <TouchableOpacity
             disabled={loading}
             onPress={() => signUpWithEmail()}
-            className="flex items-center justify-center h-14 bg-gray rounded-lg">
+            className="flex items-center justify-center h-14 bg-roster-gray rounded-lg">
             {loading ? (
               <Loading dotColor="#FAFAFA" />
             ) : (
-              <Text className="text-offwhite text-lg font-bold">Sign Up</Text>
+              <Text className="text-roster-offwhite text-lg font-bold">Sign Up</Text>
             )}
           </TouchableOpacity>
           <View className="flex flex-row items-center justify-center p-3">
             <Text className="text-gray-500 tracking-wide">Already have an account?</Text>
             <TouchableOpacity className="" onPress={() => navigation.navigate("SignIn")}>
-              <Text className="text-blue font-semibold tracking-wide"> Sign In</Text>
+              <Text className="text-roster-blue font-semibold tracking-wide"> Sign In</Text>
             </TouchableOpacity>
           </View>
           <View className="w-full border-b border-gray-300"></View>
@@ -186,13 +186,13 @@ export default function SignUp({ navigation }) {
             <Text className="text-gray-500 tracking-wide">Or continue with</Text>
           </View>
           <View className="flex flex-row w-auto items-center justify-center space-x-3">
-            <TouchableOpacity className="flex items-center justify-center border-2 border-green p-3 rounded-full">
+            <TouchableOpacity className="flex items-center justify-center border-2 border-roster-green p-3 rounded-full">
               <GoogleIcon />
             </TouchableOpacity>
-            <TouchableOpacity className="flex items-center justify-center border-2 border-green p-2 rounded-full">
+            <TouchableOpacity className="flex items-center justify-center border-2 border-roster-green p-2 rounded-full">
               <Apple />
             </TouchableOpacity>
-            <TouchableOpacity className="flex items-center justify-center border-2 border-green p-3 rounded-full">
+            <TouchableOpacity className="flex items-center justify-center border-2 border-roster-green p-3 rounded-full">
               <Facebook />
             </TouchableOpacity>
           </View>
