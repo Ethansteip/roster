@@ -25,7 +25,10 @@ export default function SelectSport({ name, active }) {
   return (
     <>
       {icon(name)}
-      <Text className={`text-lg font-semibold ${active ? "text-green" : "text-offwhite"}`}>
+      <Text
+        className={`text-lg font-semibold ${
+          active ? "text-roster-green" : "text-roster-offwhite"
+        }`}>
         {name}
       </Text>
     </>

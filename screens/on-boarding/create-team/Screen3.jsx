@@ -2,8 +2,6 @@ import React from "react";
 import { View, Alert, Text, SafeAreaView, TouchableOpacity, Share } from "react-native";
 import TeamCode from "../../../components/on-boarding/team-code";
 
-import BackArrow from "../../../components/icons/general/BackArrow";
-
 const Screen3 = ({ navigation, route }) => {
   const { name, team_code } = route.params[0];
 
@@ -26,16 +24,16 @@ const Screen3 = ({ navigation, route }) => {
     }
   };
   return (
-    <SafeAreaView className="flex h-full w-full flex-col justify-between">
+    <SafeAreaView className="flex h-full w-full flex-col justify-between bg-roster-offwhite">
       <View className="flex h-1/2 flex-col justify-center items-center">
         {/* Celebreate icon */}
-        <View className="bg-green h-[100px] w-[100px] rounded-full flex items-center justify-center mb-3">
-          <View className="bg-gray border-[4px] border-offwhite h-[90px] w-[90px] rounded-full flex items-center justify-center">
+        <View className="bg-roster-green h-[100px] w-[100px] rounded-full flex items-center justify-center mb-3">
+          <View className="bg-roster-gray border-[4px] border-roster-offwhite h-[90px] w-[90px] rounded-full flex items-center justify-center">
             <Text className="text-[40px]">🎉</Text>
           </View>
         </View>
-        <Text className="text-3xl font-bold text-center text-green">Success!</Text>
-        <Text className=" w-5/6 text-center text-gray">
+        <Text className="text-3xl font-bold text-center text-roster-green">Success!</Text>
+        <Text className=" w-5/6 text-center text-roster-gray">
           <Text className="font-bold">{name}</Text> have joined the big leagues! Use your seceret
           team code below to start inviting team mates to your roster!
         </Text>
@@ -47,13 +45,13 @@ const Screen3 = ({ navigation, route }) => {
       <View className="flex h-1/2 flex-col justify-end items-center mx-8 space-y-3 pb-5">
         <TouchableOpacity
           onPress={onShare}
-          className="p-3 flex justify-center items-center border-2 border-blue indigo-900 border-black rounded-lg w-full">
+          className="p-3 flex justify-center items-center border-2 border-roster-blue indigo-900 rounded-lg w-full">
           <Text className="text-lg font-bold text-gray">Invite Teammates</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("Home")}
-          className="p-3 flex justify-center items-center bg-gray indigo-900 border-black rounded-lg w-full">
-          <Text className="text-lg font-bold text-offwhite">Finish</Text>
+          className="p-3 flex justify-center items-center bg-roster-gray indigo-900 border-black rounded-lg w-full">
+          <Text className="text-lg font-bold text-roster-offwhite">Finish</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -81,8 +81,8 @@ const Screen2 = ({ route, navigation }) => {
     return (
       <TouchableOpacity
         onPress={() => setActiveSelection(item.id)}
-        className={`flex justify-center items-center border-4 border-offwhite bg-gray w-[33%] py-3 rounded-lg ${
-          activeSelection === item.id ? "border-green" : "bg-indigo-400"
+        className={`flex justify-center items-center border-4 border-roster-offwhite bg-roster-gray w-[33%] py-3 rounded-xl ${
+          activeSelection === item.id ? "border-roster-green" : "bg-roster-gray"
         }`}>
         <SelectSport name={item.name} active={activeSelection === item.id} />
       </TouchableOpacity>
@@ -108,7 +108,7 @@ const Screen2 = ({ route, navigation }) => {
           <BackArrow />
         </TouchableOpacity>
         <View className="flex flex-col">
-          <Text className="text-3xl font-bold text-gray3">Choose your sport</Text>
+          <Text className="text-3xl font-bold text-roster-gray">Choose your sport</Text>
         </View>
         {loading ? (
           <View className="flex flex-col items-center justify-center h-3/4 w-full">
@@ -123,12 +123,12 @@ const Screen2 = ({ route, navigation }) => {
           disabled={!activeSelection}
           onPress={handleSubmit}
           className={`w-full flex items-center justify-center h-14 rounded-lg ${
-            activeSelection ? "bg-gray" : "bg-[#d1d5db]"
+            activeSelection ? "bg-roster-gray" : "bg-[#d1d5db]"
           }`}>
           {loadingSubmit ? (
             <Loading dotColor="#FAFAFA" />
           ) : (
-            <Text className="text-lg font-bold text-offwhite">Next</Text>
+            <Text className="text-lg font-bold text-roster-offwhite">Next</Text>
           )}
         </TouchableOpacity>
       </View>

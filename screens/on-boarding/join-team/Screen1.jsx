@@ -153,14 +153,14 @@ const Screen1 = ({ navigation }) => {
   return (
     // neww
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView className="flex-1 w-full flex-col bg-offwhite">
+      <SafeAreaView className="flex-1 w-full flex-col bg-roster-offwhite">
         <TouchableOpacity onPress={() => navigation.goBack()} className="w-10 ml-5 mt-3">
           <BackArrow />
         </TouchableOpacity>
         <View className="flex h-1/2 flex-col justify-center items-center">
           {/* Join Team */}
-          <Text className="text-3xl font-bold text-center text-gray">Join a team</Text>
-          <Text className="text-lg w-5/6 text-center text-gray mt-5">
+          <Text className="text-3xl font-bold text-center text-roster-gray">Join a team</Text>
+          <Text className="text-lg w-5/6 text-center text-roster-gray3 mt-5">
             You can join a team by entering the unique 6-digit team code provided by your team
             captain below.
           </Text>
@@ -171,6 +171,7 @@ const Screen1 = ({ navigation }) => {
                 key={i}
                 style={[styles.inputBox, focusedInput === i && styles.focusedInput]}
                 value={state[`code${i}`]}
+                autoCapitalize={"none"}
                 returnKeyType={i === 6 ? "done" : "next"}
                 onChangeText={(text) => handleChange(text, `code${i}`)}
                 onKeyPress={({ nativeEvent }) => inputFocus(i - 1, nativeEvent.key)}
@@ -194,7 +195,7 @@ const Screen1 = ({ navigation }) => {
             {loading ? (
               <Loading dotColor="#FAFAFA" />
             ) : (
-              <Text className="text-lg font-bold text-offwhite">Join Team</Text>
+              <Text className="text-lg font-bold text-roster-offwhite">Join Team</Text>
             )}
           </TouchableOpacity>
           <TouchableOpacity className="">

@@ -7,9 +7,10 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 import Home from "../../screens/home/Home";
+import AccountNavigation from "../account/AccountNavigation";
 import Schedule from "../../screens/schedule/Schedule";
 import Messages from "../../screens/chat/Messages";
-import Account from "../../screens/account/Account";
+
 import { supabase } from "../../lib/supbase/supabase";
 
 const Drawer = createDrawerNavigator();
@@ -35,7 +36,7 @@ export const HomeNavigation = ({ ...session }) => {
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Schedule" component={Schedule} />
       <Drawer.Screen name="Messages" component={Messages} />
-      <Drawer.Screen name="Account">{() => <Account {...session} />}</Drawer.Screen>
+      <Drawer.Screen name="Account">{() => <AccountNavigation {...session} />}</Drawer.Screen>
     </Drawer.Navigator>
   );
 };

@@ -24,7 +24,6 @@ import styles from "../../styles/forms";
 export default function CreateProfile(session) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
-  const [usernameFocused, setUsernameFocused] = useState(false);
   const [firstName, setFirstname] = useState("");
   const [firstnameFocused, setFirstnameFocused] = useState(false);
   const [lastName, setLastname] = useState("");
@@ -34,14 +33,10 @@ export default function CreateProfile(session) {
   );
   const [imagePicked, setImagePicked] = useState(false);
   const [avatarPayload, setAvatarPayload] = useState(null);
-  //const [Image, setImageData] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [usernameError, setUsernameError] = useState("");
   const [showUsernameMessage, setShowUsernameMessage] = useState(false);
   const [originalUsername] = useState("");
-  const [modalText, setmodalText] = useState("");
-  const [modalSuccess, setModalSuccess] = useState(null);
 
   const debouncedSearch = useDebounce(username);
   const navigation = useNavigation();
@@ -69,16 +64,6 @@ export default function CreateProfile(session) {
     }
   }, []);
 
-  async function fetchImage(url) {
-    try {
-      const response = await fetch(url);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      throw error;
-    }
-  }
-
   async function updateProfile({ username, firstName, lastName }) {
     try {
       setLoading(true);
@@ -87,18 +72,24 @@ export default function CreateProfile(session) {
         throw new Error("No user on the session!");
       }
 
-      const uploadAvatarResult = await uploadAvatar();
+      // If an image was picked using the document picker
+      // Upload it to storage and get the public url.
+      if (imagePicked) {
+        const uploadAvatarResult = await uploadAvatar();
 
-      if (!uploadAvatarResult) {
-        throw new Error("Avatar upload failed!");
-      }
+        if (!uploadAvatarResult) {
+          throw new Error("Avatar upload failed!");
+        }
 
-      const { data: publicAvatarUrl } = await supabase.storage
-        .from("avatars")
-        .getPublicUrl(uploadAvatarResult);
+        const { data: publicAvatarUrl } = await supabase.storage
+          .from("avatars")
+          .getPublicUrl(uploadAvatarResult);
 
-      if (!publicAvatarUrl) {
-        throw new Error("Failed to get public avatar URL!");
+        if (!publicAvatarUrl) {
+          throw new Error("Failed to get public avatar URL!");
+        }
+
+        setAvatarUrl(publicAvatarUrl.publicUrl);
       }
 
       const updates = {
@@ -106,7 +97,7 @@ export default function CreateProfile(session) {
         username,
         first_name: firstName,
         last_name: lastName,
-        avatar_url: publicAvatarUrl.publicUrl,
+        avatar_url: avatarUrl,
         updated_at: new Date(),
       };
 
@@ -191,13 +182,9 @@ export default function CreateProfile(session) {
     try {
       const { data, error } = await supabase.storage
         .from("avatars")
-        .upload(
-          `${session?.user.email}.png`,
-          imagePicked ? decode(avatarPayload) : await fetchImage(avatarUrl),
-          {
-            contentType: "image/png",
-          }
-        );
+        .upload(`${session?.user.email}.png`, decode(avatarPayload), {
+          contentType: "image/png",
+        });
 
       if (error) {
         console.log(error.message);
@@ -257,8 +244,6 @@ export default function CreateProfile(session) {
                   <TextInput
                     autoCorrect={false}
                     placeholderTextColor="lightgray"
-                    onFocus={() => setUsernameFocused(true)}
-                    onBlur={() => setUsernameFocused(false)}
                     placeholder="Username"
                     style={styles.input.input}
                     value={username}

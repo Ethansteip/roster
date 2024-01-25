@@ -11,7 +11,6 @@ import styles from "../../../styles/forms";
 
 const Screen1 = ({ navigation }) => {
   const [teamName, setTeamName] = useState("");
-  const [teamNameFocused, setTeamNameFocused] = useState(false);
   const [openCountry, setOpenCountry] = useState(false);
   const [country, setCountry] = useState(null);
   const [countries, setCountries] = useState([
@@ -55,12 +54,10 @@ const Screen1 = ({ navigation }) => {
                 <View
                   style={[
                     styles.input.inputContainer,
-                    teamNameFocused ? { borderColor: "black" } : { borderColor: "lightgray" },
+                    { borderColor: "black", backgroundColor: "#FAFAFA" },
                   ]}>
                   <TextInput
                     style={styles.input.input}
-                    onFocus={() => setTeamNameFocused(true)}
-                    onBlur={() => setTeamNameFocused(false)}
                     placeholder="Team Name"
                     value={teamName}
                     onChangeText={(text) => setTeamName(text)}
@@ -82,7 +79,7 @@ const Screen1 = ({ navigation }) => {
                   }
                   placeholderStyle={{
                     color: "#adadad",
-                    backgroundColor: "transparent",
+                    backgroundColor: "#FAFAFA",
                     paddingHorizontal: 10,
                     paddingVertical: 14,
                     fontSize: 16,
@@ -109,7 +106,7 @@ const Screen1 = ({ navigation }) => {
                   }
                   placeholderStyle={{
                     color: "#adadad",
-                    backgroundColor: "transparent",
+                    backgroundColor: "#FAFAFA",
                     paddingHorizontal: 10,
                     paddingVertical: 14,
                     fontSize: 16,
@@ -129,6 +126,7 @@ const Screen1 = ({ navigation }) => {
                 <View
                   style={[
                     styles.input.inputContainer,
+                    { backgroundColor: "#FAFAFA" },
                     cityFocused || city ? { borderColor: "black" } : { borderColor: "lightgray" },
                   ]}>
                   <TextInput
@@ -149,10 +147,10 @@ const Screen1 = ({ navigation }) => {
         <TouchableOpacity
           disabled={!isFilledOut}
           className={`flex items-center justify-center h-14 rounded-lg ${
-            isFilledOut ? "bg-gray" : "bg-[#d1d5db]"
+            isFilledOut ? "bg-roster-gray" : "bg-[#d1d5db]"
           }`}
           onPress={() => navigation.navigate("Screen2", { teamName, country, state, city })}>
-          <Text className="text-lg font-bold text-offwhite">Next</Text>
+          <Text className="text-lg font-bold text-roster-offwhite">Next</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
