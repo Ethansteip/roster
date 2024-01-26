@@ -59,4 +59,6 @@ const getAccountData = async (user: string): Promise<AccountData | void> => {
   }
 };
 
-export { getAvatar, getAccountData };
+const signOut = async () => await supabase.auth.signOut();
+
+export { getAvatar, getAccountData, signOut };

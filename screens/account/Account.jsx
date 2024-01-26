@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, SafeAreaView, Text, TouchableOpacity } from "react-native";
+import { View, SafeAreaView, Text, TouchableOpacity, ScrollView } from "react-native";
 import { getAccountData } from "../../lib/supbase/Account";
-import { supabase } from "../../lib/supbase/supabase";
 import Avatar from "../../components/account/avatar";
 import Wins from "../../components/account/Wins";
-import AccountListItem from "../../components/account/AccountListItem";
+import BackArrow from "./../../components/icons/general/BackArrow";
+import PersonalInformation from "../../components/account/PersonalInformation";
+import UtilitiesList from "../../components/account/UtilitiesList";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const Account = (session, navigation) => {
+export default function AccountPage({ route, navigation }) {
+  const { session } = route.params;
   const [avatarSrc, setAvatarSrc] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
   useEffect(() => {
-    console.log("NAVIGATION: ", navigation);
     const fetchAccountData = async () => {
       const accountData = await getAccountData(session.user.id);
       if (accountData) {
@@ -29,35 +31,52 @@ const Account = (session, navigation) => {
 
   return (
     <SafeAreaView className="flex-1 flex-col bg-roster-offwhite">
-      {/* Profile pic */}
-      <View className="flex flex-col p-5 justify-center items-center mt-10">
-        <Avatar editable={true} size={120} src={avatarSrc} />
-        <Text className="text-2xl font-bold text-roster-gray mt-2">{username}</Text>
-        <Text className="text-sm text-gray-400">
-          {firstName} {lastName}
-        </Text>
-        <Wins wins={100} />
-      </View>
+      <TouchableOpacity className="w-10 p-2" onPress={() => navigation.goBack()}>
+        <BackArrow />
+      </TouchableOpacity>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}>
+        {/* Profile pic */}
+        <View className="flex flex-col justify-center items-center">
+          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <Avatar editable={true} size={120} src={avatarSrc} />
+          </TouchableOpacity>
+          <Text className="text-2xl font-bold text-roster-gray mt-2">{username}</Text>
+          <Text className="text-sm text-gray-400">
+            {firstName} {lastName}
+          </Text>
+          <Wins wins={100} />
+        </View>
 
-      {/* List Items */}
-      <View className="flex mt-5 flex-col justify-center items-center border-2 border-gray-400 mx-10 rounded-xl">
-        <TouchableOpacity onPress={() => navigation.navigate("Profile")} className="flex flex-row">
-          <AccountListItem title="Profile" icon="user" />
-        </TouchableOpacity>
-        <TouchableOpacity className="flex flex-row">
-          <AccountListItem title="Settings" icon="settings" />
-        </TouchableOpacity>
-        <TouchableOpacity className="flex flex-row">
-          <AccountListItem title="Join team" icon="arrow-left" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="w-full items-center justify-end p-3 rounded-lg bg-gray"
-          onPress={() => supabase.auth.signOut()}>
-          <Text className="text-lg font-bold text-offwhite">Sign Out</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Personal Information Section */}
+        <View className="flex flex-col w-full justify-center items-center px-8 mt-8">
+          <View className="flex flex-row w-full items-center justify-between mb-2 px-1">
+            <Text className="flex justify-start text-[16px] text-black">Personal Information</Text>
+            <TouchableOpacity
+              className="flex flex-row space-x-1"
+              onPress={() => navigation.navigate("Profile")}>
+              <MaterialIcons name="edit" size={16} color="#3b82f6" />
+              <Text className="text-blue-500">Edit</Text>
+            </TouchableOpacity>
+          </View>
+          <View className="flex flex-col w-full border-2 border-gray-200 rounded-lg">
+            <PersonalInformation firstName={firstName} lastName={lastName} username={username} />
+          </View>
+        </View>
+
+        {/* Utilities Section */}
+        <View className="flex flex-col w-full justify-center items-center px-8 mt-6">
+          <View className="flex flex-row w-full items-center justify-start mb-2 px-1">
+            <Text className="flex justify-start text-[16px] text-black">Utilities</Text>
+          </View>
+          <View className="flex flex-col w-full border-2 border-gray-200 rounded-lg">
+            <UtilitiesList />
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
-};
-
-export default Account;
+}

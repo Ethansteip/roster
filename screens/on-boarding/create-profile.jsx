@@ -218,7 +218,7 @@ export default function CreateProfile(session) {
               {/* Profile Picture */}
               <View className="w-full flex h-auto items-center justify-center mt-3">
                 <TouchableOpacity onPress={pickImage} className="flex items-center justify-center">
-                  <Avatar src={avatarUrl} />
+                  <Avatar src={avatarUrl} size={100} />
                   <Text className="text-gray mt-2">Edit</Text>
                 </TouchableOpacity>
               </View>

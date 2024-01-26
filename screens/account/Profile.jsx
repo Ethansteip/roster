@@ -10,16 +10,17 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import SuccessModal from "../../components/forms/modal";
 import Checkmark from "../../components/icons/general/checkmark";
 import Cancel from "../../components/icons/general/cancel";
 import Avatar from "../../components/account/avatar";
-import Upload from "../../components/icons/general/upload";
+import styles from "../../styles/forms";
+import BackArrow from "../../components/icons/general/BackArrow";
 
-export default function Profile(session) {
+export default function Profile({ route, navigation }) {
+  const { session } = route.params;
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [firstName, setfirstName] = useState("");
@@ -182,6 +183,10 @@ export default function Profile(session) {
   return (
     <SafeAreaView className="flex-1 h-[100%] w-full flex-col bg-offwhite">
       {/* Success modal */}
+      <TouchableOpacity className="w-10 m-5" onPress={() => navigation.goBack()}>
+        <BackArrow className="" />
+      </TouchableOpacity>
+      <Avatar editable={true} size={120} src={session.avatar_url} />
       <SuccessModal text={modalText} success={modalSuccess} visible={modalVisible} />
       <View className="w-full flex-1 flex-col justify-between px-5">
         <ScrollView
@@ -193,14 +198,16 @@ export default function Profile(session) {
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             <View className="flex flex-col space-y-3 mt-3">
               <View className="flex flex-col space-y-2">
-                <Text className="text-gray-100 text-lg">Email</Text>
-                <TextInput
-                  editable={false}
-                  selectTextOnFocus={false}
-                  disabled={true}
-                  className="bg-gray-500 h-12 border border-[#c1c1c1] bg-[#f1f1f1] text-gray-900 text-sm rounded-lg block w-full p-3"
-                  value={session?.user.email}
-                />
+                <Text className="text-[#cfcfcf] text-lg">Email</Text>
+                {/* Email Input */}
+                <View style={styles.input.inputContainer}>
+                  <TextInput
+                    editable={false}
+                    style={styles.input.input}
+                    placeholder={session?.user.email}
+                    disabled={true}
+                  />
+                </View>
               </View>
               <View className="flex flex-col space-y-2">
                 <Text className="text-gray-100 text-lg">
@@ -254,33 +261,22 @@ export default function Profile(session) {
                 />
               </View>
             </View>
-            {/* Profile Picture */}
-            <View className="relative w-full flex items-center justify-center mt-8">
-              <Text className="text-gray mb-2">Profile Picture</Text>
-              <Avatar src={avatarUrl} />
-              <Pressable className="fixed bottom-7 left-7 h-8 w-8 rounded-full flex items-center justify-center bg-offwhite shadow">
-                <Upload fill="gray" width={20} height={20} />
-              </Pressable>
-            </View>
           </KeyboardAwareScrollView>
         </ScrollView>
         <TouchableOpacity
           disabled={loading || usernameTaken}
           className={` w-full items-center justify-end p-3 rounded-lg mb-2 ${
             !usernameTaken
-              ? "bg-offwhite border-2 border-blue"
-              : "bg-offwhite border-2 border-[#cacaca]"
+              ? "bg-roster-offwhite border-2 border-roster=blue"
+              : "bg-roster-offwhite border-2 border-[#cacaca]"
           }`}
           onPress={() => updateProfile({ username, firstName, lastName })}>
-          <Text className={`text-lg font-bold ${!usernameTaken ? "text-gray" : "text-[#cacaca]"}`}>
+          <Text
+            className={`text-lg font-bold ${
+              !usernameTaken ? "text-roster-gray" : "text-[#cacaca]"
+            }`}>
             Update Profile
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          disabled={loading}
-          className="w-full items-center justify-end p-3 rounded-lg bg-gray"
-          onPress={() => supabase.auth.signOut()}>
-          <Text className="text-lg font-bold text-offwhite">Sign Out</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

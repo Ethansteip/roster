@@ -31,12 +31,13 @@ export const HomeNavigation = ({ ...session }) => {
         drawerPosition: "right",
         headerLeft: false,
         headerRight: () => <DrawerToggleButton />,
+        headerShown: false,
       }}
       initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Schedule" component={Schedule} />
       <Drawer.Screen name="Messages" component={Messages} />
-      <Drawer.Screen name="Account">{() => <AccountNavigation {...session} />}</Drawer.Screen>
+      <Drawer.Screen name="Account" component={AccountNavigation} initialParams={{ ...session }} />
     </Drawer.Navigator>
   );
 };
