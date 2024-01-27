@@ -14,6 +14,7 @@ export default function AccountPage({ route, navigation }) {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -23,6 +24,7 @@ export default function AccountPage({ route, navigation }) {
         setUsername(accountData.username);
         setFirstName(accountData.first_name);
         setLastName(accountData.last_name);
+        setEmail(accountData.email);
       }
     };
 
@@ -31,7 +33,7 @@ export default function AccountPage({ route, navigation }) {
 
   return (
     <SafeAreaView className="flex-1 flex-col bg-roster-offwhite">
-      <TouchableOpacity className="w-10 p-2" onPress={() => navigation.goBack()}>
+      <TouchableOpacity className="w-10 py-3 ml-6" onPress={() => navigation.goBack()}>
         <BackArrow />
       </TouchableOpacity>
       <ScrollView
@@ -41,8 +43,13 @@ export default function AccountPage({ route, navigation }) {
         }}>
         {/* Profile pic */}
         <View className="flex flex-col justify-center items-center">
-          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-            <Avatar editable={true} size={120} src={avatarSrc} />
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Profile", {
+                userData: { firstName, lastName, email, username, avatarSrc },
+              })
+            }>
+            <Avatar editable={false} size={120} src={avatarSrc} />
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-roster-gray mt-2">{username}</Text>
           <Text className="text-sm text-gray-400">
@@ -57,13 +64,22 @@ export default function AccountPage({ route, navigation }) {
             <Text className="flex justify-start text-[16px] text-black">Personal Information</Text>
             <TouchableOpacity
               className="flex flex-row space-x-1"
-              onPress={() => navigation.navigate("Profile")}>
+              onPress={() =>
+                navigation.navigate("Profile", {
+                  userData: { firstName, lastName, email, username, avatarSrc },
+                })
+              }>
               <MaterialIcons name="edit" size={16} color="#3b82f6" />
               <Text className="text-blue-500">Edit</Text>
             </TouchableOpacity>
           </View>
           <View className="flex flex-col w-full border-2 border-gray-200 rounded-lg">
-            <PersonalInformation firstName={firstName} lastName={lastName} username={username} />
+            <PersonalInformation
+              email={email}
+              firstName={firstName}
+              lastName={lastName}
+              username={username}
+            />
           </View>
         </View>
 
@@ -73,7 +89,7 @@ export default function AccountPage({ route, navigation }) {
             <Text className="flex justify-start text-[16px] text-black">Utilities</Text>
           </View>
           <View className="flex flex-col w-full border-2 border-gray-200 rounded-lg">
-            <UtilitiesList />
+            <UtilitiesList navigation={navigation} />
           </View>
         </View>
       </ScrollView>

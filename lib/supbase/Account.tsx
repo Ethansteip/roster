@@ -38,7 +38,7 @@ const getAccountData = async (user: string): Promise<AccountData | void> => {
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("username, avatar_url, first_name, last_name")
+      .select("username, avatar_url, first_name, last_name, email")
       .eq("id", user)
       .single();
 
@@ -61,4 +61,29 @@ const getAccountData = async (user: string): Promise<AccountData | void> => {
 
 const signOut = async () => await supabase.auth.signOut();
 
-export { getAvatar, getAccountData, signOut };
+const validateUsername = async (username: string, originalUsername: string) => {
+  let result = {};
+  if (username === originalUsername) {
+    result = { valid: true, message: "" };
+    return result;
+  }
+  if (username.length < 3) {
+    result = { valid: false, message: "Username must be 3 or more characters." };
+    return result;
+  }
+
+  try {
+    const { data } = await supabase.from("profiles").select().eq("username", username);
+    console.log("USERNAME QUERY RESULT: ", data);
+    if (data) {
+      result = { valid: false, message: "Username already taken" };
+      return result;
+    }
+    return { valid: true, message: "" };
+  } catch (error) {
+    console.error("Error on validateUsername: ", error);
+    return Alert.alert(error.message);
+  }
+};
+
+export { getAvatar, getAccountData, signOut, validateUsername };

@@ -99,6 +99,7 @@ export default function CreateProfile(session) {
         last_name: lastName,
         avatar_url: avatarUrl,
         updated_at: new Date(),
+        email: session?.user.email,
       };
 
       let { data, error } = await supabase.from("profiles").upsert(updates).select();
@@ -218,8 +219,7 @@ export default function CreateProfile(session) {
               {/* Profile Picture */}
               <View className="w-full flex h-auto items-center justify-center mt-3">
                 <TouchableOpacity onPress={pickImage} className="flex items-center justify-center">
-                  <Avatar src={avatarUrl} size={100} />
-                  <Text className="text-gray mt-2">Edit</Text>
+                  <Avatar src={avatarUrl} size={115} editable={true} />
                 </TouchableOpacity>
               </View>
               {/*  */}
@@ -239,7 +239,7 @@ export default function CreateProfile(session) {
                 <Text className="text-roster-gray text-lg">
                   Username<Text className="text-green"> *</Text>
                 </Text>
-                {/* Email Input */}
+                {/* Username Input */}
                 <View style={[styles.input.inputContainer, { borderColor: "black" }]}>
                   <TextInput
                     autoCorrect={false}

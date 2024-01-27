@@ -12,7 +12,7 @@ export default function Avatar({ src, size = 24, editable = false }) {
     );
   };
   return (
-    <View className={`p-1 rounded-full shadow-sm ${editable ? "" : "bg-roster-blue"}`}>
+    <View className={`p-1 rounded-full shadow-sm ${editable ? "" : ""}`}>
       <View className="p-[2px] rounded-full bg-roster-offwhite relative">
         <Image
           source={{ uri: src }}
