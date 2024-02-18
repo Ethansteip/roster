@@ -1,14 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, TouchableOpacity, SafeAreaView, Text, TextInput } from "react-native";
 import { useDebounce } from "../../lib/hooks/hooks";
 import { validateUsername } from "../../lib/supbase/Account";
 import BackArrow from "../../components/icons/general/BackArrow";

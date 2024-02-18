@@ -1,6 +1,5 @@
 import { Alert } from "react-native";
 import { supabase } from "./supabase";
-import { User } from "@supabase/supabase-js";
 
 interface AccountData {
   avatar_url: string;
@@ -86,4 +85,23 @@ const validateUsername = async (username: string, originalUsername: string) => {
   }
 };
 
-export { getAvatar, getAccountData, signOut, validateUsername };
+const getUserTeams = async (userId: string) => {
+  try {
+    const { data, error } = await supabase.from("rosters").select("*").eq("player_id", userId);
+
+    if (error) {
+      Alert.alert("Error", error.message);
+      return;
+    }
+
+    if (!data) {
+      return false;
+    }
+    return data;
+  } catch (error) {
+    Alert.alert("Error", error.message);
+    return false;
+  }
+};
+
+export { getAvatar, getAccountData, signOut, validateUsername, getUserTeams };

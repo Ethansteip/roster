@@ -20,7 +20,9 @@ const UtilitiesList = ({ navigation }) => {
         <ArrowRight colour="#1d4ed8" size={16} />
       </TouchableOpacity>
       {/* Teams */}
-      <TouchableOpacity className="flex flex-row items-center justify-between w-full px-3 py-2 border-b border-gray-200">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Teams")}
+        className="flex flex-row items-center justify-between w-full px-3 py-2 border-b border-gray-200">
         <View className="flex flex-row items-center space-x-2">
           <Feather name="users" size={24} color="black" />
           <Text>Teams</Text>
