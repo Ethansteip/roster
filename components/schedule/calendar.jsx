@@ -10,17 +10,10 @@ export default function Calendar({ onValueChange }) {
   const swiper = useRef();
   const [value, setValue] = useState(new Date());
   const [week, setWeek] = useState(0);
-  const [eventData, setEventData] = useState(null);
 
   useEffect(() => {
     onValueChange(value.toDateString());
   }, [value]);
-
-  // useEffect(async () => {
-  //   const events = await getEvents("952");
-  //   setEventData(events);
-  //   console.log("Event Data: ", eventData);
-  // }, []);
 
   const weeks = React.useMemo(() => {
     const start = moment().add(week, "weeks").startOf("week");
@@ -38,84 +31,65 @@ export default function Calendar({ onValueChange }) {
   }, [week]);
 
   return (
-    <>
-      <Swiper
-        index={1}
-        ref={swiper}
-        loop={false}
-        height={10}
-        containerStyle={{ height: 90, flex: 0 }}
-        showsPagination={false}
-        onIndexChanged={(ind) => {
-          if (ind === 1) {
-            return;
-          }
-          setTimeout(() => {
-            const newIndex = ind - 1;
-            const newWeek = week + newIndex;
-            setWeek(newWeek);
-            setValue(moment(value).add(newIndex, "week").toDate());
-            swiper.current.scrollTo(1, false);
-          }, 100);
-        }}>
-        {weeks.map((dates, index) => (
-          <View
-            style={[styles.itemRow, { paddingHorizontal: 16, paddingVertical: 15 }]}
-            key={index}>
-            {dates.map((item, dateIndex) => {
-              const isActive = value.toDateString() === item.date.toDateString();
-              return (
-                <TouchableWithoutFeedback
-                  key={dateIndex}
-                  onPress={() => {
-                    setValue(item.date);
-                  }}>
-                  <View
-                    style={[
-                      styles.item,
-                      isActive && {
-                        backgroundColor: "#FAFAFA",
-                        borderColor: "#111",
-                      },
-                    ]}>
-                    <Text style={[styles.itemWeekday, isActive && { color: "#363D4F" }]}>
-                      {item.weekday}
-                    </Text>
-                    <Text style={[styles.itemDate, isActive && { color: "#363D4F" }]}>
-                      {item.date.getDate()}
-                    </Text>
-                  </View>
-                </TouchableWithoutFeedback>
-              );
-            })}
-          </View>
-        ))}
-      </Swiper>
-      {/* <TouchableOpacity onPress={resetDate}>
-        <Text>Today</Text>
-      </TouchableOpacity> */}
-    </>
+    <Swiper
+      index={1}
+      ref={swiper}
+      loop={false}
+      height={10}
+      containerStyle={{
+        height: 80,
+        flex: 0,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      showsPagination={false}
+      onIndexChanged={(ind) => {
+        if (ind === 1) {
+          return;
+        }
+        setTimeout(() => {
+          const newIndex = ind - 1;
+          const newWeek = week + newIndex;
+          setWeek(newWeek);
+          setValue(moment(value).add(newIndex, "week").toDate());
+          swiper.current.scrollTo(1, false);
+        }, 100);
+      }}>
+      {weeks.map((dates, index) => (
+        <View style={[styles.itemRow, { paddingHorizontal: 16, paddingVertical: 15 }]} key={index}>
+          {dates.map((item, dateIndex) => {
+            const isActive = value.toDateString() === item.date.toDateString();
+            return (
+              <TouchableWithoutFeedback
+                key={dateIndex}
+                onPress={() => {
+                  setValue(item.date);
+                }}>
+                <View
+                  style={[
+                    styles.item,
+                    isActive && {
+                      backgroundColor: "#FAFAFA",
+                      borderColor: "#111",
+                    },
+                  ]}>
+                  <Text style={[styles.itemWeekday, isActive && { color: "#363D4F" }]}>
+                    {item.weekday}
+                  </Text>
+                  <Text style={[styles.itemDate, isActive && { color: "#363D4F" }]}>
+                    {item.date.getDate()}
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            );
+          })}
+        </View>
+      ))}
+    </Swiper>
   );
 }
 
 const styles = StyleSheet.create({
-  picker: {
-    flex: 1,
-    maxHeight: 74,
-    paddingVertical: 12,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  subtitle: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#999999",
-    marginBottom: 12,
-  },
-  footer: {
-    marginTop: "auto",
-    paddingHorizontal: 16,
-  },
   /** Item */
   item: {
     flex: 1,
@@ -132,10 +106,9 @@ const styles = StyleSheet.create({
   itemRow: {
     width: width,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#363D4F",
-    marginHorizontal: -4,
   },
   itemWeekday: {
     fontSize: 13,
@@ -147,27 +120,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: "#FAFAFA",
-  },
-  /** Placeholder */
-  placeholder: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    height: 400,
-    marginTop: 0,
-    padding: 0,
-    backgroundColor: "transparent",
-  },
-  placeholderInset: {
-    borderWidth: 4,
-    borderColor: "#e5e7eb",
-    borderStyle: "dashed",
-    borderRadius: 9,
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-  },
-  swiperContainer: {
-    height: swiperHeight,
   },
 });

@@ -8,7 +8,7 @@ import {
 } from "@react-navigation/drawer";
 import Home from "../../screens/home/Home";
 import AccountNavigation from "../account/AccountNavigation";
-import Schedule from "../../screens/schedule/Schedule";
+import ScheduleNavigation from "../schedule/ScheduleNavigation";
 import Messages from "../../screens/chat/Messages";
 
 import { supabase } from "../../lib/supbase/supabase";
@@ -29,13 +29,31 @@ export const HomeNavigation = ({ ...session }) => {
     <Drawer.Navigator
       screenOptions={{
         drawerPosition: "right",
-        headerLeft: false,
-        headerRight: () => <DrawerToggleButton />,
-        headerShown: false,
+        headerRight: () => <DrawerToggleButton tintColor="#FAFAFA" />,
+        headerShown: true,
+        headerTitleStyle: {
+          fontSize: 22,
+          paddingBottom: 5,
+        },
+        headerStyle: {
+          backgroundColor: "#363D4F",
+          shadowColor: "transparent",
+        },
+        headerTintColor: "#FAFAFA",
       }}
       initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Schedule" component={Schedule} />
+      <Drawer.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerTitle: "Home",
+        }}
+      />
+      <Drawer.Screen
+        name="Schedule"
+        component={ScheduleNavigation}
+        initialParams={{ ...session }}
+      />
       <Drawer.Screen name="Messages" component={Messages} />
       <Drawer.Screen name="Account" component={AccountNavigation} initialParams={{ ...session }} />
     </Drawer.Navigator>

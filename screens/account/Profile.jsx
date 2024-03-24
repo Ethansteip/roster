@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, TouchableOpacity, SafeAreaView, Text, TextInput } from "react-native";
 import { useDebounce } from "../../lib/hooks/hooks";
 import { validateUsername } from "../../lib/supbase/Account";
-import BackArrow from "../../components/icons/general/BackArrow";
 import Avatar from "../../components/account/avatar";
 import styles from "../../styles/forms";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -32,12 +31,9 @@ const Profile = ({ route, navigation }) => {
 
   return (
     <SafeAreaView className="flex-1 flex-col bg-roster-offwhite">
-      <TouchableOpacity className="w-10 py-3 ml-6" onPress={() => navigation.goBack()}>
-        <BackArrow />
-      </TouchableOpacity>
       <KeyboardAwareScrollView extraHeight={250}>
         {/* Profile pic, username, first/last name */}
-        <View className="flex flex-col justify-center items-center">
+        <View className="flex flex-col justify-center items-center pt-10">
           <TouchableOpacity>
             <Avatar editable={true} size={120} src={avatarSrc} />
           </TouchableOpacity>

@@ -33,16 +33,13 @@ export default function AccountPage({ route, navigation }) {
 
   return (
     <SafeAreaView className="flex-1 flex-col bg-roster-offwhite">
-      <TouchableOpacity className="w-10 py-3 ml-6" onPress={() => navigation.goBack()}>
-        <BackArrow />
-      </TouchableOpacity>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           flexGrow: 1,
         }}>
         {/* Profile pic */}
-        <View className="flex flex-col justify-center items-center">
+        <View className="flex flex-col justify-center items-center pt-10">
           <TouchableOpacity
             onPress={() =>
               navigation.navigate("Profile", {
