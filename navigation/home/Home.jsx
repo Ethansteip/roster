@@ -2,7 +2,6 @@ import React from "react";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerToggleButton,
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
@@ -28,27 +27,10 @@ export const HomeNavigation = ({ ...session }) => {
   return (
     <Drawer.Navigator
       screenOptions={{
-        drawerPosition: "right",
-        headerRight: () => <DrawerToggleButton tintColor="#FAFAFA" />,
-        headerShown: true,
-        headerTitleStyle: {
-          fontSize: 22,
-          paddingBottom: 5,
-        },
-        headerStyle: {
-          backgroundColor: "#363D4F",
-          shadowColor: "transparent",
-        },
-        headerTintColor: "#FAFAFA",
+        headerShown: false,
       }}
       initialParamsdrawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerTitle: "Home",
-        }}
-      />
+      <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen
         name="Schedule"
         component={ScheduleNavigation}
