@@ -7,13 +7,13 @@ import EventCard from "./EventCard";
 
 export default function Index({ navigation }) {
   const [selectedDate, setSelectedDate] = useState("");
-  const [rawDate, setRawDate] = useState(null);
+  const [rawDate, setRawDate] = useState();
   const [eventData, setEventData] = useState([]);
 
   const updateDate = (newDate) => {
-    setRawDate(new Date(Date.parse(newDate)));
     const date = moment(newDate, "ddd MMM DD YYYY");
     const formattedDate = date.format("ddd MMM DD");
+    setRawDate(date.format("ddd MMM DD YYYY").toString());
     setSelectedDate(formattedDate);
     navigation.setOptions({ headerTitle: formattedDate });
   };
@@ -27,9 +27,12 @@ export default function Index({ navigation }) {
         setEventData(events);
       }
     };
-
     fetchEvents();
   }, []);
+
+  useEffect(() => {
+    if (rawDate) console.log("RawDate: ", rawDate);
+  }, [rawDate]);
 
   return (
     <SafeAreaView className="flex flex-col h-full relative items-center justify-center w-full">
